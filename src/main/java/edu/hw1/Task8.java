@@ -4,8 +4,10 @@ public final class Task8 {
     private Task8() {
     }
 
+    private static final int EXTENSION = 4;
+
     public static boolean knightBoardCapture(int[][] board) {
-        int[][] expand = new int[board.length + 4][board[0].length + 4];
+        int[][] expand = new int[board.length + EXTENSION][board[0].length + EXTENSION];
         for (int i = 2; i < expand.length - 2; i++) {
             System.arraycopy(board[i - 2], 0, expand[i], 2, expand.length - 2 - 2);
         }

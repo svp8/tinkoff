@@ -7,9 +7,6 @@ public final class Task5 {
 
     public static boolean isPalindromeDescendant(int number) {
         String num = String.valueOf(number);
-        if (num.length() < 3) {
-            return true;
-        }
         while (num.length() > 1) {
             boolean flag = true;
             for (int i = 0; i < num.length() / 2; i++) {

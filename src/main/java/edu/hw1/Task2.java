@@ -5,6 +5,8 @@ public final class Task2 {
 
     }
 
+    private static final int DECIMAL = 10;
+
     public static int countDigits(int number) {
         int count = 0;
         int number1 = number;
@@ -13,7 +15,7 @@ public final class Task2 {
         }
         while (number1 != 0) {
             count++;
-            number1 = number1 / 10;
+            number1 = number1 / DECIMAL;
         }
         return count;
     }

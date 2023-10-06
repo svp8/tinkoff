@@ -8,15 +8,18 @@ public final class Task6 {
 
     }
 
+    private static final int KAPREKAR_NUMBER = 6174;
+    private static final int DECIMAL = 10;
+
     public static int countK(int num, int count) {
-        if (num == 6174) {
+        if (num == KAPREKAR_NUMBER) {
             return count;
         }
         int temp = num;
         ArrayList<Integer> array = new ArrayList<>();
         do {
-            array.add(temp % 10);
-            temp /= 10;
+            array.add(temp % DECIMAL);
+            temp /= DECIMAL;
         } while (temp > 0);
         Collections.sort(array);
         ArrayList<Integer> array2 = new ArrayList<>(array);
@@ -24,8 +27,8 @@ public final class Task6 {
         int num1 = 0;
         int num2 = 0;
         for (int i = array.size() - 1; i >= 0; i--) {
-            num1 += array.get(i) * Math.pow(10, i);
-            num2 += array2.get(i) * Math.pow(10, i);
+            num1 += array.get(i) * Math.pow(DECIMAL, i);
+            num2 += array2.get(i) * Math.pow(DECIMAL, i);
         }
         int result = num1 - num2;
         return countK(result, count + 1);

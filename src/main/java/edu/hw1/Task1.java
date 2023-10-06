@@ -5,14 +5,16 @@ public final class Task1 {
 
     }
 
+    private static final int SECONDS_IN_MINUTE = 60;
+
     public static int minutesToSeconds(String time) {
         String[] temp = time.split(":");
         if (temp.length == 2) {
             try {
                 int minutes = Integer.parseInt(temp[0]);
                 int seconds = Integer.parseInt(temp[1]);
-                if (seconds < 60) {
-                    return minutes * 60 + seconds;
+                if (seconds < SECONDS_IN_MINUTE) {
+                    return minutes * SECONDS_IN_MINUTE + seconds;
                 }
             } catch (NumberFormatException e) {
                 return -1;
