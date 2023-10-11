@@ -6,6 +6,9 @@ public final class Task3 {
     }
 
     public static boolean isNestable(int[] a1, int[] a2) {
+        if (a1.length == 0 || a2.length == 0) {
+            throw new NullPointerException();
+        }
         int min1 = Integer.MAX_VALUE;
         int min2 = Integer.MAX_VALUE;
         int max1 = Integer.MIN_VALUE;

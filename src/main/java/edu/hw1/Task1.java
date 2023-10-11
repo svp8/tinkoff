@@ -13,6 +13,9 @@ public final class Task1 {
             try {
                 int minutes = Integer.parseInt(temp[0]);
                 int seconds = Integer.parseInt(temp[1]);
+                if (minutes < 0 || seconds < 0) {
+                    return -1;
+                }
                 if (seconds < SECONDS_IN_MINUTE) {
                     return minutes * SECONDS_IN_MINUTE + seconds;
                 }

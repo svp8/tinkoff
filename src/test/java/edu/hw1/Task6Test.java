@@ -1,17 +1,14 @@
 package edu.hw1;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class Task6Test {
 
-    @Test
-    void countK() {
-        Assertions.assertEquals(3, Task6.countK(3524, 0));
-        Assertions.assertEquals(5, Task6.countK(6621, 0));
-        Assertions.assertEquals(4, Task6.countK(6554, 0));
-        Assertions.assertEquals(3, Task6.countK(1234, 0));
+    @ParameterizedTest(name = "#{index} - Test with Number: {1}")
+    @CsvSource({"3, 3524","5,6621", "4,6554", "3,1234"})
+    void countK(int expected,int number) {
+        Assertions.assertEquals(expected, Task6.countK(number, 0));
     }
 }

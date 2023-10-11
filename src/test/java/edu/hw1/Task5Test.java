@@ -1,18 +1,23 @@
 package edu.hw1;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
 
 class Task5Test {
 
+    @ParameterizedTest(name = "#{index} - Test with Number: {0}")
+    @ValueSource(ints = {11211230, 13001120, 23336014, 11})
+    void isPalindromeDescendant(int number) {
+        Assertions.assertTrue(Task5.isPalindromeDescendant(number));
+    }
+
     @Test
-    void isPalindromeDescendant() {
-        Assertions.assertTrue(Task5.isPalindromeDescendant(11211230));
-        Assertions.assertTrue(Task5.isPalindromeDescendant(13001120));
-        Assertions.assertTrue(Task5.isPalindromeDescendant(23336014));
-        Assertions.assertTrue(Task5.isPalindromeDescendant(11));
+    @DisplayName("Test with a non-palindrome")
+    void testNotPalindrome() {
         Assertions.assertFalse(Task5.isPalindromeDescendant(3456));
     }
 }
