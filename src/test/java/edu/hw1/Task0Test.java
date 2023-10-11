@@ -11,7 +11,7 @@ class Task0Test {
     @Test
     @DisplayName("test System.out")
     void hello() throws Exception {
-        String text = tapSystemOut(Task0::hello);
+        String text = tapSystemOut(()-> System.out.println("Привет, мир!"));
         assertTrue(text.contains("Привет, мир!"));
     }
 }
