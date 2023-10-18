@@ -1,5 +1,7 @@
 package edu.project1Hangman;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface DictionaryInterface {
-    String giveWord();
+    @NotNull String giveWord();
 }

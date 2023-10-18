@@ -1,32 +1,54 @@
 package edu.project1Hangman;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import org.jetbrains.annotations.NotNull;
+
 public interface Result {
-    String getMessage();
-    record FailedGuess(int maxAttempts,int wrongGuesses) implements Result {
+    int maxAttempts();
+
+    int attempts();
+
+    StringBuilder currentGuess();
+
+    HashMap<Character, ArrayList<Integer>> letters();
+
+    int guessedLetters();
+
+    @NotNull String message();
+
+    record FailedGuess(int maxAttempts, int attempts, StringBuilder currentGuess,
+                       HashMap<Character, ArrayList<Integer>> letters, int guessedLetters) implements Result {
 
         @Override
-        public String getMessage() {
-            return String.format("Missed, mistake %d out of %d.", wrongGuesses, maxAttempts);
+        public @NotNull String message() {
+            return String.format("Missed, mistake %d out of %d.", attempts, maxAttempts);
         }
     }
-    record Win() implements Result {
+
+    record Win(int maxAttempts, int attempts, StringBuilder currentGuess,
+               HashMap<Character, ArrayList<Integer>> letters, int guessedLetters) implements Result {
 
         @Override
-        public String getMessage() {
+        public @NotNull String message() {
             return "You won!";
         }
     }
-    record Lose() implements Result {
+
+    record Lose(int maxAttempts, int attempts, StringBuilder currentGuess,
+                HashMap<Character, ArrayList<Integer>> letters, int guessedLetters) implements Result {
 
         @Override
-        public String getMessage() {
+        public @NotNull String message() {
             return "You lost!";
         }
     }
-    record RightGuess() implements Result {
+
+    record RightGuess(int maxAttempts, int attempts, StringBuilder currentGuess,
+                      HashMap<Character, ArrayList<Integer>> letters, int guessedLetters) implements Result {
 
         @Override
-        public String getMessage() {
+        public @NotNull String message() {
             return "You guessed right!";
         }
     }
