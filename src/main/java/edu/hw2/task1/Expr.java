@@ -1,7 +1,6 @@
 package edu.hw2.task1;
 
-public sealed interface Expr
-    permits Expr.Addition, Expr.Constant, Expr.Exponent, Expr.Multiplication, Expr.Negate {
+public sealed interface Expr {
     double evaluate();
 
     record Constant(double value) implements Expr {

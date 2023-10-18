@@ -1,4 +1,4 @@
-package edu.hw2;
+package edu.hw2.task3;
 
 import edu.hw2.task3.PopularCommandExecutor;
 import edu.hw2.task3.managers.DefaultConnectionManager;
@@ -15,10 +15,9 @@ public class Task3Test {
     void testFaultyConnectionManager() {
         PopularCommandExecutor cmd = new PopularCommandExecutor(new FaultyConnectionManager(), 1);
         try {
-            boolean flag = cmd.updatePackages();
-            Assertions.assertTrue(flag);
+            cmd.updatePackages();
         } catch (Exception e) {
-            Assertions.assertEquals(TimeoutException.class, e.getCause().getClass());
+            Assertions.assertEquals(ConnectionException.class, e.getCause().getClass());
         }
     }
 
@@ -27,10 +26,9 @@ public class Task3Test {
     void testDefaultConnectionManager() {
         PopularCommandExecutor cmd = new PopularCommandExecutor(new DefaultConnectionManager(), 30);
         try {
-            boolean flag = cmd.updatePackages();
-            Assertions.assertTrue(flag);
+            cmd.updatePackages();
         } catch (Exception e) {
-            Assertions.assertEquals(TimeoutException.class, e.getCause().getClass());
+            Assertions.assertEquals(ConnectionException.class, e.getCause().getClass());
         }
     }
 }

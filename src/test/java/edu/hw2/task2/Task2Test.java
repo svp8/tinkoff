@@ -1,4 +1,4 @@
-package edu.hw2;
+package edu.hw2.task2;
 
 import edu.hw2.task2.Rectangle;
 import edu.hw2.task2.Square;

@@ -10,13 +10,12 @@ public class FaultyConnection implements Connection {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
-    public boolean execute(String command) {
+    public void execute(String command) {
         Random random = new Random();
         if (random.nextInt() % 2 == 0) {
             throw new ConnectionException("Faulty Connection");
         } else {
             LOGGER.info(command);
-            return true;
         }
 
     }

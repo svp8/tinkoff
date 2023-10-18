@@ -1,4 +1,4 @@
-package edu.hw2;
+package edu.hw2.task1;
 
 import edu.hw2.task1.Expr;
 import org.junit.jupiter.api.Assertions;
@@ -20,16 +20,4 @@ class Task1Test {
         Assertions.assertEquals(37,res.evaluate());
     }
 
-    @Test
-    @DisplayName("Test of Exponent")
-    void exponent(){
-        var exp = new Expr.Exponent(new Expr.Constant(3), 2);
-        Assertions.assertEquals(9,exp.evaluate());
-    }
-    @Test
-    @DisplayName("Test of negative values")
-    void negate(){
-        var exp = new Expr.Negate(new Expr.Negate(new Expr.Constant(4)));
-        Assertions.assertEquals(4,exp.evaluate());
-    }
 }

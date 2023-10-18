@@ -1,4 +1,4 @@
-package edu.hw2;
+package edu.hw2.task4;
 
 import edu.hw2.task3.PopularCommandExecutor;
 import edu.hw2.task3.managers.FaultyConnectionManager;
