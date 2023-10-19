@@ -6,6 +6,7 @@ public class Square extends Rectangle {
     public Rectangle setWidth(int width) {
         Rectangle rectangle = new Rectangle();
         rectangle.setWidth(width);
+        rectangle.setHeight(this.getHeight());
         return rectangle;
     }
 
@@ -13,6 +14,7 @@ public class Square extends Rectangle {
     public Rectangle setHeight(int height) {
         Rectangle rectangle = new Rectangle();
         rectangle.setHeight(height);
+        rectangle.setWidth(this.getWidth());
         return rectangle;
     }
 }
