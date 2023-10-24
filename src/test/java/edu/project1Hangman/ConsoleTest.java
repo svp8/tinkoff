@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,48 +16,20 @@ class ConsoleTest {
     @DisplayName("Test word with 0 length")
     void wordIsEmpty() {
         Console console = new Console();
-        Assertions.assertFalse(console.start(new DictionaryInterface() {
-            @Override
-            public @NotNull String giveWord() {
-                return "";
-            }
-        }));
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> console.start(new Dictionary(Arrays.asList("", "fsrf")))
+        );
     }
 
     @Test
     @DisplayName("Test word with numbers")
     void wordHasNumbers() {
         Console console = new Console();
-        Assertions.assertFalse(console.start(new DictionaryInterface() {
-            @Override
-            public @NotNull String giveWord() {
-                return "abc23ere";
-            }
-        }));
-    }
-
-    @Test
-    void prepareWord() {
-        String word = "abc";
-        Console console = new Console();
-        StringBuilder currentGuess = new StringBuilder();
-        HashMap<Character, ArrayList<Integer>> letters = new HashMap<>();
-        console.prepareWord(currentGuess, letters, word);
-        Assertions.assertEquals(3, currentGuess.length());
-        Assertions.assertEquals("***", currentGuess.toString());
-    }
-
-    @Test
-    @DisplayName("Test if letters in hashmap after prepareWord() are valid")
-    void checkLetters() {
-        String word = "abc";
-        Console console = new Console();
-        StringBuilder currentGuess = new StringBuilder();
-        HashMap<Character, ArrayList<Integer>> letters = new HashMap<>();
-        console.prepareWord(currentGuess, letters, word);
-        Assertions.assertEquals(0, letters.get('a').get(0));
-        Assertions.assertEquals(1, letters.get('b').get(0));
-        Assertions.assertEquals(2, letters.get('c').get(0));
+        Assertions.assertThrows(
+            IllegalArgumentException.class,
+            () -> console.start(new Dictionary(Arrays.asList("123", "fsrf")))
+        );
     }
 
     @Test

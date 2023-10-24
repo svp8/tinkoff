@@ -1,7 +1,5 @@
 package edu.project1Hangman;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import org.jetbrains.annotations.NotNull;
 
 public interface Result {
@@ -9,16 +7,11 @@ public interface Result {
 
     int attempts();
 
-    StringBuilder currentGuess();
-
-    HashMap<Character, ArrayList<Integer>> letters();
-
-    int guessedLetters();
+    String currentGuess();
 
     @NotNull String message();
 
-    record FailedGuess(int maxAttempts, int attempts, StringBuilder currentGuess,
-                       HashMap<Character, ArrayList<Integer>> letters, int guessedLetters) implements Result {
+    record FailedGuess(int maxAttempts, int attempts, String currentGuess) implements Result {
 
         @Override
         public @NotNull String message() {
@@ -26,8 +19,7 @@ public interface Result {
         }
     }
 
-    record Win(int maxAttempts, int attempts, StringBuilder currentGuess,
-               HashMap<Character, ArrayList<Integer>> letters, int guessedLetters) implements Result {
+    record Win(int maxAttempts, int attempts, String currentGuess) implements Result {
 
         @Override
         public @NotNull String message() {
@@ -35,8 +27,7 @@ public interface Result {
         }
     }
 
-    record Lose(int maxAttempts, int attempts, StringBuilder currentGuess,
-                HashMap<Character, ArrayList<Integer>> letters, int guessedLetters) implements Result {
+    record Lose(int maxAttempts, int attempts, String currentGuess) implements Result {
 
         @Override
         public @NotNull String message() {
@@ -44,12 +35,19 @@ public interface Result {
         }
     }
 
-    record RightGuess(int maxAttempts, int attempts, StringBuilder currentGuess,
-                      HashMap<Character, ArrayList<Integer>> letters, int guessedLetters) implements Result {
+    record RightGuess(int maxAttempts, int attempts, String currentGuess) implements Result {
 
         @Override
         public @NotNull String message() {
             return "You guessed right!";
+        }
+    }
+
+    record RepeatedGuess(int maxAttempts, int attempts, String currentGuess) implements Result {
+
+        @Override
+        public @NotNull String message() {
+            return "Letter have been already guessed";
         }
     }
 }
