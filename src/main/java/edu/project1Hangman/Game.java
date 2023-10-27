@@ -50,11 +50,10 @@ public class Game {
     }
 
     public Result processFailedGuess(char input) {
-        if (guessedLetters.contains(input)) {
+        if (!guessedLetters.add(input)) {
             return new Result.RepeatedGuess(maxAttempts, attempts, String.valueOf(userAnswer));
         }
         attempts++;
-        guessedLetters.add(input);
         if (attempts == maxAttempts) {
             return new Result.Lose(maxAttempts, attempts, String.valueOf(userAnswer));
         } else {
@@ -68,13 +67,9 @@ public class Game {
     ) {
         for (int i = 0; i < hiddenWord.length(); i++) {
             char curLetter = hiddenWord.charAt(i);
-            if (letters.containsKey(curLetter)) {
-                letters.get(curLetter).add(i);
-            } else {
-                ArrayList<Integer> arr = new ArrayList<>();
-                arr.add(i);
-                letters.put(curLetter, arr);
-            }
+            letters
+                .computeIfAbsent(curLetter, ignored -> new ArrayList<>())
+                .add(i);
         }
     }
 

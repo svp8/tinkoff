@@ -39,6 +39,7 @@ public class Console {
                 }
 
             }
+            LOGGER.info("The hidden word is " + word);
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
