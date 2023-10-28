@@ -1,60 +1,25 @@
 package edu.hw4;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Tasks11to20 {
+public final class Tasks11to20 {
 
-    public static void main(String[] args) {
-        List<Animal> animals = Arrays.asList(
-            new Animal("namer", Animal.Type.SPIDER,
-                Animal.Sex.M, 23, 3434, 523, true
-            ),
-            new Animal("na", Animal.Type.SPIDER,
-                Animal.Sex.F, 8, 4, 7, false
-            ),
-            new Animal("name123fe d 3 e", Animal.Type.DOG,
-                Animal.Sex.M, 2, 20, 422, true
-            ),
-            new Animal("name2ew fr", Animal.Type.DOG,
-                Animal.Sex.F, 56, 2, -222, true
-            ),
-            new Animal("name2ew fr", Animal.Type.DOG,
-                Animal.Sex.F, 80, -1, -22, true
-            ),
-            new Animal("name2ew fr", Animal.Type.DOG,
-                Animal.Sex.F, 80, -1, -22, true
-            ),
-            new Animal("name1 33 2", Animal.Type.FISH,
-                Animal.Sex.F, 32, 400, 1, true
-            ),
-            new Animal("nasa", Animal.Type.SPIDER,
-                Animal.Sex.F, 3, 4, 7, true
-            )
-        );
-        List<Animal> animals2 = Arrays.asList(
-            new Animal("name1uy", Animal.Type.FISH,
-                Animal.Sex.F, 32, 400, 3, true
-            ),
-            new Animal("nasa", Animal.Type.SPIDER,
-                Animal.Sex.F, 3, 4, 7, true
-            )
-        );
-        System.out.println(validateAnimalsPrettier(animals));
+    public static final int HUNDRED = 100;
+
+    private Tasks11to20() {
+
     }
 
     public static List<Animal> biteAndHigherHundred(List<Animal> animals) {
         return animals.stream()
             .filter(Animal::bites)
-            .filter(animal -> animal.height() > 100)
+            .filter(animal -> animal.height() > HUNDRED)
             .toList();
     }
 
@@ -65,7 +30,7 @@ public class Tasks11to20 {
 
     public static List<Animal> nameHasMoreThanTwoWords(List<Animal> animals) {
         return animals.stream()
-            .filter(animal -> animal.name().split(" ").length > 2).toList();
+            .filter(animal -> animal.name().split(" ").length > 1).toList();
     }
 
     public static Boolean dogHigherThanK(List<Animal> animals, int k) {
@@ -78,9 +43,11 @@ public class Tasks11to20 {
     }
 
     public static List<Animal> sortByTypeSexName(List<Animal> animals) {
-        return animals.stream().sorted(Comparator.comparing(Animal::type)
-                .thenComparing(Comparator.comparing(Animal::sex))
-                .thenComparing(Comparator.comparing(Animal::name)))
+        return animals.stream()
+            .sorted(Comparator.comparing(Animal::type, (o1, o2) -> o1.toString().compareTo(o2.toString()))
+                .thenComparing(Animal::sex)
+                .thenComparing(Animal::name)
+            )
             .toList();
     }
 
@@ -88,7 +55,7 @@ public class Tasks11to20 {
         long dogs = animals.stream()
             .filter(animal -> animal.type().equals(Animal.Type.DOG) && animal.bites()).count();
         long spiders = animals.stream()
-            .filter(animal -> animal.type().equals(Animal.Type.DOG) && animal.bites()).count();
+            .filter(animal -> animal.type().equals(Animal.Type.SPIDER) && animal.bites()).count();
         if (dogs == 0 || spiders == 0) {
             return false;
         }

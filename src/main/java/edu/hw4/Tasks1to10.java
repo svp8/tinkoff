@@ -1,7 +1,5 @@
 package edu.hw4;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -10,27 +8,9 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Tasks {
+public final class Tasks1to10 {
 
-    public static void main(String[] args) {
-        List<Animal> animals = Arrays.asList(
-            new Animal("name123fe", Animal.Type.BIRD,
-                Animal.Sex.M, 2, 2, 4, true
-            ),
-            new Animal("name2ew", Animal.Type.BIRD,
-                Animal.Sex.F, 56, 1, 2, true
-            ),
-            new Animal("name1", Animal.Type.CAT,
-                Animal.Sex.F, 32, 4, 1, true
-            ),
-            new Animal("namer", Animal.Type.CAT,
-                Animal.Sex.M, 23, 3, 5, true
-            ),
-            new Animal("na", Animal.Type.BIRD,
-                Animal.Sex.F, 8, 8, 7, true
-            )
-        );
-        System.out.println(ageNotEqualsPaws(animals));
+    private Tasks1to10() {
     }
 
     public static List<Animal> sortHeightASC(List<Animal> animals) {
@@ -54,7 +34,22 @@ public class Tasks {
 
     public static Animal.Sex findSexMajority(List<Animal> animals) {
         return animals.stream().collect(Collectors.groupingBy(Animal::sex, Collectors.counting())).entrySet().stream()
-            .max(Map.Entry.comparingByValue()).orElse(null).getKey();
+            .max(Map.Entry.comparingByValue()).orElse(new Map.Entry<Animal.Sex, Long>() {
+                @Override
+                public Animal.Sex getKey() {
+                    return null;
+                }
+
+                @Override
+                public Long getValue() {
+                    return null;
+                }
+
+                @Override
+                public Long setValue(Long value) {
+                    return null;
+                }
+            }).getKey();
     }
 
     public static Map<Animal.Type, Animal> heaviestByType(List<Animal> animals) {
@@ -67,8 +62,9 @@ public class Tasks {
     public static Animal oldestAnimal(List<Animal> animals, int k) {
         return animals.stream().sorted(Comparator.comparingInt(Animal::age).reversed()).limit(k).toList().getLast();
     }
+
     public static Optional<Animal> heaviestAndLowerK(List<Animal> animals, int k) {
-        return animals.stream().filter(animal -> animal.height()<k).max(Comparator.comparingInt(Animal::weight));
+        return animals.stream().filter(animal -> animal.height() < k).max(Comparator.comparingInt(Animal::weight));
     }
 
     public static Integer countPaws(List<Animal> animals) {
@@ -76,6 +72,6 @@ public class Tasks {
     }
 
     public static List<Animal> ageNotEqualsPaws(List<Animal> animals) {
-        return animals.stream().filter(animal->animal.paws()!=animal.age()).toList();
+        return animals.stream().filter(animal -> animal.paws() != animal.age()).toList();
     }
 }

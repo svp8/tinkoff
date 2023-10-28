@@ -1,9 +1,11 @@
 package edu.hw4;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class ValidationError extends IllegalArgumentException {
+    public static final String NAMEFIELD = "name";
     private final String field;
 
     public ValidationError(String s, String field) {
@@ -15,21 +17,37 @@ public class ValidationError extends IllegalArgumentException {
         return field;
     }
 
+    @Override public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ValidationError that = (ValidationError) o;
+        return Objects.equals(field, that.field);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(field);
+    }
+
     public static Set<ValidationError> validateAnimal(Animal animal) {
         Set<ValidationError> errors = new HashSet<>();
-        validateName(errors,animal);
-        validateHeight(errors,animal);
-        validateWeight(errors,animal);
-        validateAge(errors,animal);
+        validateName(errors, animal);
+        validateHeight(errors, animal);
+        validateWeight(errors, animal);
+        validateAge(errors, animal);
         return errors;
 
     }
 
     private static void validateName(Set<ValidationError> errors, Animal animal) {
         if (animal.name() == null) {
-            errors.add(new ValidationError("Name is null", "name"));
+            errors.add(new ValidationError("Name is null", NAMEFIELD));
         } else if ("".equals(animal.name())) {
-            errors.add(new ValidationError("Name is empty", "name"));
+            errors.add(new ValidationError("Name is empty", NAMEFIELD));
         }
     }
 
