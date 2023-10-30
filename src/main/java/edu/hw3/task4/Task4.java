@@ -4,6 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public final class Task4 {
+
+    public static final int LASTNUMBER = 3999;
+
     private Task4() {
     }
 
@@ -21,6 +24,9 @@ public final class Task4 {
     private static final int FOUR = 4;
 
     public static String convertToRoman(int num) {
+        if (num <= 0 || num > LASTNUMBER) {
+            throw new IllegalArgumentException("Out of range");
+        }
         LinkedHashMap<String, Integer> romanNumerals = new LinkedHashMap<String, Integer>();
         romanNumerals.put("M", THOUSAND);
         romanNumerals.put("CM", NINEHUNDRED);

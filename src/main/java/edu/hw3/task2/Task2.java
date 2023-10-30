@@ -9,9 +9,8 @@ public final class Task2 {
     }
 
     public static ArrayList<String> clusterize(String string) {
-        char[] brackets = string.toCharArray();
-        Deque<Character> deque = new ArrayDeque();
-        StringBuilder stringBuilder = new StringBuilder();
+        Deque<Character> deque = new ArrayDeque<>();
+        StringBuilder stringBuilder = new StringBuilder(string.length());
         ArrayList<String> clusters = new ArrayList<>();
         for (int i = 0; i < string.length(); i++) {
             char temp = string.charAt(i);
@@ -24,7 +23,7 @@ public final class Task2 {
             }
             if (deque.isEmpty()) {
                 clusters.add(stringBuilder.toString());
-                stringBuilder.setLength(0);
+                stringBuilder.delete(0, stringBuilder.length());
             }
         }
 

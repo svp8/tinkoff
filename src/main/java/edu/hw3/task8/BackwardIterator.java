@@ -15,10 +15,7 @@ public class BackwardIterator<T> implements Iterator<T> {
 
     @Override
     public boolean hasNext() {
-        if (currentIndex >= 0) {
-            return true;
-        }
-        return false;
+        return currentIndex >= 0;
     }
 
     @Override

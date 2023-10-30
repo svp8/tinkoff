@@ -11,11 +11,7 @@ public final class Task3 {
     public static <T> Map<T, Integer> freqDict(List<T> list) {
         Map<T, Integer> dict = new HashMap<>();
         for (T l : list) {
-            if (dict.containsKey(l)) {
-                dict.put(l, dict.get(l) + 1);
-            } else {
-                dict.put(l, 1);
-            }
+            dict.merge(l, 1, Integer::sum);
         }
         return dict;
     }

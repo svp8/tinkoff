@@ -16,13 +16,24 @@ import static org.junit.jupiter.api.Assertions.*;
 class Task5Test {
     private static Stream<Arguments> parseContacts() {
         return Stream.of(
-            Arguments.of(Arrays.asList("Thomas Aquinas", "Rene Descartes", "David Hume", "John Locke"), Arrays.asList(
-                "John Locke",
-                "Thomas Aquinas",
-                "David Hume",
-                "Rene Descartes"
-            ), "ASC"),
-            Arguments.of(Arrays.asList("Carl Gauss", "Leonhard Euler", "Paul Erdos"), Arrays.asList(
+            Arguments.of(Arrays.asList(
+                    new Contact("Thomas Aquinas"),
+                    new Contact("Rene Descartes"),
+                    new Contact("David Hume"),
+                    new Contact("John Locke")
+                ),
+                Arrays.asList(
+                    "John Locke",
+                    "Thomas Aquinas",
+                    "David Hume",
+                    "Rene Descartes"
+                ), "ASC"
+            ),
+            Arguments.of(Arrays.asList(
+                    new Contact("Carl Gauss"),
+                        new Contact("Leonhard Euler"),
+                            new Contact("Paul Erdos")
+            ), Arrays.asList(
                 "Paul Erdos", "Leonhard Euler", "Carl Gauss"
             ), "DESC"),
             Arguments.of(new ArrayList<>(), new ArrayList<>(), "DESC"),
@@ -33,7 +44,7 @@ class Task5Test {
 
     @ParameterizedTest
     @MethodSource
-    void parseContacts(List<String> expected, List<String> actual, String method) {
+    void parseContacts(List<Contact> expected, List<String> actual, String method) {
         Assertions.assertEquals(expected, Task5.parseContacts(actual, method));
     }
 
