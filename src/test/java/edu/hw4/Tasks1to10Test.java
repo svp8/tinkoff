@@ -16,20 +16,20 @@ class Tasks1to10Test {
 
     @BeforeAll static void before() {
         animals = Arrays.asList(
-            new Animal("name123fe", Animal.Type.BIRD,
-                Animal.Sex.M, 2, 2, 4, true
+            new Animal("name123fe", Type.BIRD,
+                Sex.M, 2, 2, 4, true
             ),
-            new Animal("abc", Animal.Type.BIRD,
-                Animal.Sex.F, 56, 1, 2, true
+            new Animal("abc", Type.BIRD,
+                Sex.F, 56, 1, 2, true
             ),
-            new Animal("xyz yy", Animal.Type.CAT,
-                Animal.Sex.F, 32, 4, 1, true
+            new Animal("xyz yy", Type.CAT,
+                Sex.F, 32, 4, 1, true
             ),
-            new Animal("Aiuy dse", Animal.Type.CAT,
-                Animal.Sex.M, 23, 3, 5, true
+            new Animal("Aiuy dse", Type.CAT,
+                Sex.M, 23, 3, 5, true
             ),
-            new Animal("na", Animal.Type.BIRD,
-                Animal.Sex.F, 8, 8, 7, true
+            new Animal("na", Type.BIRD,
+                Sex.F, 8, 8, 7, true
             )
         );
     }
@@ -37,19 +37,19 @@ class Tasks1to10Test {
     @Test
     void sortHeightASC() {
         Assertions.assertEquals(List.of(
-            new Animal("abc", Animal.Type.BIRD,
-                Animal.Sex.F, 56, 1, 2, true
-            ), new Animal("name123fe", Animal.Type.BIRD,
-                Animal.Sex.M, 2, 2, 4, true
+            new Animal("abc", Type.BIRD,
+                Sex.F, 56, 1, 2, true
+            ), new Animal("name123fe", Type.BIRD,
+                Sex.M, 2, 2, 4, true
             ),
-            new Animal("Aiuy dse", Animal.Type.CAT,
-                Animal.Sex.M, 23, 3, 5, true
+            new Animal("Aiuy dse", Type.CAT,
+                Sex.M, 23, 3, 5, true
             ),
-            new Animal("xyz yy", Animal.Type.CAT,
-                Animal.Sex.F, 32, 4, 1, true
+            new Animal("xyz yy", Type.CAT,
+                Sex.F, 32, 4, 1, true
             ),
-            new Animal("na", Animal.Type.BIRD,
-                Animal.Sex.F, 8, 8, 7, true
+            new Animal("na", Type.BIRD,
+                Sex.F, 8, 8, 7, true
             )
         ), Tasks1to10.sortHeightASC(animals));
     }
@@ -63,38 +63,37 @@ class Tasks1to10Test {
         );
     }
 
-    //"na", "name123fe", "Aiuy dse", "xyz yy", "na"
     @Test
     void countAnimalTypes() {
         Assertions.assertEquals(2, Tasks1to10.countAnimalTypes(animals).size());
-        Assertions.assertEquals(3, Tasks1to10.countAnimalTypes(animals).get(Animal.Type.BIRD));
+        Assertions.assertEquals(3, Tasks1to10.countAnimalTypes(animals).get(Type.BIRD));
     }
 
     @Test
     void longestName() {
         ArrayList<Animal> animals2 = new ArrayList<>();
-        animals2.add(new Animal("samesize", Animal.Type.BIRD,
-            Animal.Sex.F, 8, 8, 7, true
+        animals2.add(new Animal("samesize", Type.BIRD,
+            Sex.F, 8, 8, 7, true
         ));
-        animals2.add(new Animal("samesiz2", Animal.Type.BIRD,
-            Animal.Sex.F, 8, 8, 7, true
+        animals2.add(new Animal("samesiz2", Type.BIRD,
+            Sex.F, 8, 8, 7, true
         ));
-        animals2.add(new Animal("same", Animal.Type.BIRD,
-            Animal.Sex.F, 8, 8, 7, true
+        animals2.add(new Animal("same", Type.BIRD,
+            Sex.F, 8, 8, 7, true
         ));
         Assertions.assertEquals("samesize", Tasks1to10.longestName(animals2).name());
     }
 
     @Test
     void findSexMajority() {
-        Assertions.assertEquals(Animal.Sex.F, Tasks1to10.findSexMajority(animals));
+        Assertions.assertEquals(Sex.F, Tasks1to10.findSexMajority(animals));
         assertNull(Tasks1to10.findSexMajority(new ArrayList<>()));
     }
 
     @Test
     void heaviestByType() {
         Assertions.assertEquals(2, Tasks1to10.heaviestByType(animals).size());
-        Assertions.assertEquals("na", Tasks1to10.heaviestByType(animals).get(Animal.Type.BIRD).name());
+        Assertions.assertEquals("na", Tasks1to10.heaviestByType(animals).get(Type.BIRD).name());
     }
 
     @Test
@@ -119,8 +118,8 @@ class Tasks1to10Test {
     void ageNotEqualsPaws() {
         Assertions.assertEquals(4, Tasks1to10.ageNotEqualsPaws(animals).size());
         Assertions.assertEquals(0, Tasks1to10.ageNotEqualsPaws(
-            List.of(new Animal("same", Animal.Type.SPIDER,
-            Animal.Sex.F, 8, 8, 7, true
-        ))).size());
+            List.of(new Animal("same", Type.SPIDER,
+                Sex.F, 8, 8, 7, true
+            ))).size());
     }
 }

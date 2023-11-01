@@ -25,83 +25,93 @@ public final class Tasks11to20 {
 
     public static Integer countWeightMoreThanHeight(List<Animal> animals) {
         return Math.toIntExact(animals.stream()
-            .filter(animal -> animal.height() < animal.weight()).count());
+            .filter(animal -> animal.height() < animal.weight())
+            .count());
     }
 
     public static List<Animal> nameHasMoreThanTwoWords(List<Animal> animals) {
         return animals.stream()
-            .filter(animal -> animal.name().split(" ").length > 1).toList();
+            .filter(animal -> animal.name()
+                .split(" ").length > 1)
+            .toList();
     }
 
     public static Boolean dogHigherThanK(List<Animal> animals, int k) {
-        return animals.stream().anyMatch((animal) -> animal.type() == Animal.Type.DOG && animal.height() > k);
+        return animals.stream()
+            .anyMatch((animal) -> animal.type() == Type.DOG && animal.height() > k);
     }
 
     public static Integer sumWeightWithAgeFromKtoL(List<Animal> animals, int k, int l) {
-        return animals.stream().filter((animal -> animal.age() >= k && animal.age() <= l)).mapToInt(Animal::weight)
+        return animals.stream()
+            .filter((animal -> animal.age() >= k && animal.age() <= l))
+            .mapToInt(Animal::weight)
             .sum();
     }
 
     public static List<Animal> sortByTypeSexName(List<Animal> animals) {
         return animals.stream()
-            .sorted(Comparator.comparing(Animal::type, (o1, o2) -> o1.toString().compareTo(o2.toString()))
-                .thenComparing(Animal::sex)
-                .thenComparing(Animal::name)
+            .sorted(Comparator.comparing(
+                        Animal::type,
+                    Comparator.comparing(Enum::toString)
+                    )
+                    .thenComparing(Animal::sex)
+                    .thenComparing(Animal::name)
             )
             .toList();
     }
 
     public static Boolean spidersBiteMoreOftenThanDogs(List<Animal> animals) {
         long dogs = animals.stream()
-            .filter(animal -> animal.type().equals(Animal.Type.DOG) && animal.bites()).count();
+            .filter(animal -> animal.type()
+                .equals(Type.DOG) && animal.bites())
+            .count();
         long spiders = animals.stream()
-            .filter(animal -> animal.type().equals(Animal.Type.SPIDER) && animal.bites()).count();
+            .filter(animal -> animal.type()
+                .equals(Type.SPIDER) && animal.bites())
+            .count();
         if (dogs == 0 || spiders == 0) {
             return false;
         }
         return spiders > dogs;
-
-//            .collect(Collectors.toMap(Animal::type, animal -> animal.bites() ? 1 : 0, Integer::sum))
-//            .entrySet();
     }
 
     public static Animal heaviestFish(List<Animal>... animals) {
-        return Stream.of(animals).flatMap(Collection::stream).filter(animal -> animal.type().equals(Animal.Type.FISH))
-            .max(Comparator.comparingInt(Animal::weight)).orElse(null);
+        return Stream.of(animals)
+            .flatMap(Collection::stream)
+            .filter(animal -> animal.type()
+                .equals(Type.FISH))
+            .max(Comparator.comparingInt(Animal::weight))
+            .orElse(null);
     }
 
     public static Map<String, Set<ValidationError>> validateAnimals(List<Animal> animals) {
-        return animals.stream().collect(Collectors
+        return animals.stream()
+            .collect(Collectors
                 .toMap(Animal::name, ValidationError::validateAnimal,
                     //Можно заменить
                     (set1, set2) -> {
                         set1.add(new ValidationError("Duplicate name", "name"));
                         return set1;
                     }
-                )).entrySet().stream().filter(entry -> entry.getValue().size() != 0)
+                ))
+            .entrySet()
+            .stream()
+            .filter(entry -> entry.getValue()
+                .size() != 0)
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static Map<String, String> validateAnimalsPrettier(List<Animal> animals) {
-        return validateAnimals(animals).entrySet().stream().collect(
-            Collectors.toMap(
-                Map.Entry::getKey,
-                (entry) -> entry.getValue().stream()
-                    .map(ValidationError::getField)
-                    .collect(Collectors.joining(","))
-            )
-        );
-//        return animals.stream().collect(Collectors
-//            .toMap(Animal::name, (animal -> ValidationError.
-//                    validateAnimal(animal).stream()
-//                    .map(ValidationError::getField).collect(Collectors.joining(","))
-//                ), (str1,str2)->{
-//                    String.join("name");
-//
-//                }
-//            )).entrySet().stream().filter(entry -> entry.getValue().length() != 0).collect(Collectors.toMap(
-//            Map.Entry::getKey,
-//            Map.Entry::getValue
-//        ));
+        return validateAnimals(animals).entrySet()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    (entry) -> entry.getValue()
+                        .stream()
+                        .map(ValidationError::getField)
+                        .collect(Collectors.joining(","))
+                )
+            );
     }
 }

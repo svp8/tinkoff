@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class ValidationError extends IllegalArgumentException {
-    public static final String NAMEFIELD = "name";
+    public static final String NAME_FIELD = "name";
     private final String field;
 
     public ValidationError(String s, String field) {
@@ -45,9 +45,9 @@ public class ValidationError extends IllegalArgumentException {
 
     private static void validateName(Set<ValidationError> errors, Animal animal) {
         if (animal.name() == null) {
-            errors.add(new ValidationError("Name is null", NAMEFIELD));
+            errors.add(new ValidationError("Name is null", NAME_FIELD));
         } else if ("".equals(animal.name())) {
-            errors.add(new ValidationError("Name is empty", NAMEFIELD));
+            errors.add(new ValidationError("Name is empty", NAME_FIELD));
         }
     }
 

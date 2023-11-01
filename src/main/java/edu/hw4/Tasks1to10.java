@@ -14,29 +14,43 @@ public final class Tasks1to10 {
     }
 
     public static List<Animal> sortHeightASC(List<Animal> animals) {
-        return animals.stream().sorted(Comparator.comparingInt(Animal::height)).toList();
+        return animals.stream()
+            .sorted(Comparator.comparingInt(Animal::height))
+            .toList();
     }
 
     public static List<Animal> sortWeightDESC(List<Animal> animals, long k) {
-        return animals.stream().sorted(Comparator.comparingInt(Animal::weight).reversed()).limit(k).toList();
+        return animals.stream()
+            .sorted(Comparator.comparingInt(Animal::weight)
+                .reversed())
+            .limit(k)
+            .toList();
     }
 
-    public static Map<Animal.Type, Integer> countAnimalTypes(List<Animal> animals) {
-        return animals.stream().collect(Collectors.groupingBy(
-            Animal::type,
-            Collectors.collectingAndThen(Collectors.counting(), Long::intValue)
-        ));
+    public static Map<Type, Integer> countAnimalTypes(List<Animal> animals) {
+        return animals.stream()
+            .collect(Collectors.groupingBy(
+                Animal::type,
+                Collectors.collectingAndThen(Collectors.counting(), Long::intValue)
+            ));
     }
 
     public static Animal longestName(List<Animal> animals) {
-        return animals.stream().max((o1, o2) -> Integer.compare(o1.name().length(), o2.name().length())).orElse(null);
+        return animals.stream()
+            .max(Comparator.comparingInt(o -> o.name()
+                .length()))
+            .orElse(null);
     }
 
-    public static Animal.Sex findSexMajority(List<Animal> animals) {
-        return animals.stream().collect(Collectors.groupingBy(Animal::sex, Collectors.counting())).entrySet().stream()
-            .max(Map.Entry.comparingByValue()).orElse(new Map.Entry<Animal.Sex, Long>() {
+    public static Sex findSexMajority(List<Animal> animals) {
+        return animals.stream()
+            .collect(Collectors.groupingBy(Animal::sex, Collectors.counting()))
+            .entrySet()
+            .stream()
+            .max(Map.Entry.comparingByValue())
+            .orElse(new Map.Entry<>() {
                 @Override
-                public Animal.Sex getKey() {
+                public Sex getKey() {
                     return null;
                 }
 
@@ -49,10 +63,11 @@ public final class Tasks1to10 {
                 public Long setValue(Long value) {
                     return null;
                 }
-            }).getKey();
+            })
+            .getKey();
     }
 
-    public static Map<Animal.Type, Animal> heaviestByType(List<Animal> animals) {
+    public static Map<Type, Animal> heaviestByType(List<Animal> animals) {
         return animals.stream()
             .collect(Collectors.toMap(Animal::type, Function.identity(),
                 BinaryOperator.maxBy(Comparator.comparing(Animal::weight))
@@ -60,18 +75,29 @@ public final class Tasks1to10 {
     }
 
     public static Animal oldestAnimal(List<Animal> animals, int k) {
-        return animals.stream().sorted(Comparator.comparingInt(Animal::age).reversed()).limit(k).toList().getLast();
+        return animals.stream()
+            .sorted(Comparator.comparingInt(Animal::age)
+                .reversed())
+            .limit(k)
+            .toList()
+            .getLast();
     }
 
     public static Optional<Animal> heaviestAndLowerK(List<Animal> animals, int k) {
-        return animals.stream().filter(animal -> animal.height() < k).max(Comparator.comparingInt(Animal::weight));
+        return animals.stream()
+            .filter(animal -> animal.height() < k)
+            .max(Comparator.comparingInt(Animal::weight));
     }
 
     public static Integer countPaws(List<Animal> animals) {
-        return animals.stream().mapToInt(Animal::paws).sum();
+        return animals.stream()
+            .mapToInt(Animal::paws)
+            .sum();
     }
 
     public static List<Animal> ageNotEqualsPaws(List<Animal> animals) {
-        return animals.stream().filter(animal -> animal.paws() != animal.age()).toList();
+        return animals.stream()
+            .filter(animal -> animal.paws() != animal.age())
+            .toList();
     }
 }
