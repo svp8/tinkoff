@@ -1,4 +1,7 @@
-package edu.project2Labyrinth;
+package edu.project2Labyrinth.solvers;
+
+import edu.project2Labyrinth.Coordinate;
+import edu.project2Labyrinth.Labyrinth;
 
 import java.util.List;
 

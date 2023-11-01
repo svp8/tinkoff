@@ -19,8 +19,8 @@ public class Cell {
         return Objects.hash(coordinate);
     }
 
-    public Cell(int x,int y) {
-        this.coordinate = new Coordinate(x,y);
+    public Cell(int y,int x) {
+        this.coordinate = new Coordinate(y,x);
     }
 
     public Coordinate getCoordinate() {

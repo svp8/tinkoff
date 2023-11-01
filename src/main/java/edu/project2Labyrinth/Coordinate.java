@@ -1,4 +1,4 @@
 package edu.project2Labyrinth;
 
-public record Coordinate(int x, int y) {
+public record Coordinate(int y, int x) {
 }
