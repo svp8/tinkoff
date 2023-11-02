@@ -13,24 +13,25 @@ public final class Task5 {
             return new ArrayList<>();
         }
         List<Contact> temp = new ArrayList<>();
-        people.forEach((name) -> temp.add(new Contact(name)));
+        people.forEach((name) -> {
+            if (name == null || name.trim().equals("")) {
+                throw new NullPointerException("Name is empty");
+            }
+            String[] input = name.split(" ");
+            if (input.length >= 2) {
+                temp.add(new Contact(input[0], input[1]));
+            } else if (input.length == 1) {
+                temp.add(new Contact(input[0], null));
+            }
+        });
         Comparator<Contact> comparator = (temp1, temp2) -> {
-            String o1 = temp1.name();
-            String o2 = temp2.name();
-            if (o1 == null || o2 == null) {
-                throw new NullPointerException("Element is null");
+            String o1 = temp1.surname();
+            String o2 = temp2.surname();
+            if (o1 == null) {
+                o1 = temp1.name();
             }
-            String[] name = o1.split(" ");
-            if (name.length >= 2) {
-                o1 = name[1];
-            } else if (name.length == 1) {
-                o1 = name[0];
-            }
-            name = o2.split(" ");
-            if (name.length >= 2) {
-                o2 = name[1];
-            } else if (name.length == 1) {
-                o2 = name[0];
+            if (o2 == null) {
+                o2 = temp2.name();
             }
             return o1.compareTo(o2);
         };

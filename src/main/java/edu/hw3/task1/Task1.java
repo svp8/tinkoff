@@ -16,12 +16,13 @@ public final class Task1 {
             char letter = str.charAt(i);
             boolean isUpperCase = Character.isUpperCase(letter);
             letter = Character.toLowerCase(letter);
-            int num = (int) letter;
-            if (num >= A && num < N) {
+            int num = letter;
+            if (num >= A && num < N) { //Интервал от 97 до 110
                 num = (N - num) + M;
-            } else if (num >= N && num <= Z) {
+            } else if (num >= N && num <= Z) {  //Интервал от 110 до 122
                 num = N - (num - M);
             }
+            //Остальные символы не меняем
             if (isUpperCase) {
                 stringBuilder.append(Character.toUpperCase((char) num));
             } else {

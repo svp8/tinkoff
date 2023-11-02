@@ -11,16 +11,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-import static org.junit.jupiter.api.Assertions.*;
 
 class Task5Test {
     private static Stream<Arguments> parseContacts() {
         return Stream.of(
             Arguments.of(Arrays.asList(
-                    new Contact("Thomas Aquinas"),
-                    new Contact("Rene Descartes"),
-                    new Contact("David Hume"),
-                    new Contact("John Locke")
+                    new Contact("Thomas", "Aquinas"),
+                    new Contact("Rene", "Descartes"),
+                    new Contact("David", "Hume"),
+                    new Contact("John", "Locke")
                 ),
                 Arrays.asList(
                     "John Locke",
@@ -30,11 +29,18 @@ class Task5Test {
                 ), "ASC"
             ),
             Arguments.of(Arrays.asList(
-                    new Contact("Carl Gauss"),
-                        new Contact("Leonhard Euler"),
-                            new Contact("Paul Erdos")
+                new Contact("Carl", "Gauss"),
+                new Contact("Leonhard", "Euler"),
+                new Contact("Paul", "Erdos")
             ), Arrays.asList(
                 "Paul Erdos", "Leonhard Euler", "Carl Gauss"
+            ), "DESC"),
+            Arguments.of(Arrays.asList(
+                new Contact("Paul", null),
+                new Contact("Carl", "Gauss"),
+                new Contact("Leonhard", "Euler")
+            ), Arrays.asList(
+                "Leonhard Euler", "Paul", "Carl Gauss"
             ), "DESC"),
             Arguments.of(new ArrayList<>(), new ArrayList<>(), "DESC"),
             Arguments.of(new ArrayList<>(), null, "DESC")
