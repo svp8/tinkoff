@@ -3,13 +3,17 @@ package edu.project2Labyrinth;
 import java.util.Objects;
 
 public class Cell {
-    private final boolean[] walls={true,true,true,true};
+    private final boolean[] walls = {true, true, true, true};
     private Coordinate coordinate;
-    private boolean visited=false;
+    private boolean visited = false;
 
     @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Cell cell = (Cell) o;
         return Objects.equals(coordinate, cell.coordinate);
     }
@@ -19,8 +23,8 @@ public class Cell {
         return Objects.hash(coordinate);
     }
 
-    public Cell(int y,int x) {
-        this.coordinate = new Coordinate(y,x);
+    public Cell(int y, int x) {
+        this.coordinate = new Coordinate(y, x);
     }
 
     public Coordinate getCoordinate() {
