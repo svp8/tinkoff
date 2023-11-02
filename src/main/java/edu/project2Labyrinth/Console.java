@@ -15,7 +15,8 @@ import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@SuppressWarnings({"uncommentedmain", "RegexpSinglelineJava"})
+//fallthrough fails
+@SuppressWarnings({"uncommentedmain", "RegexpSinglelineJava", "FallThrough"})
 public class Console {
     private final static Logger LOGGER = LogManager.getLogger();
     public static final String REGEX_COORDINATE = "^\\d+$";
