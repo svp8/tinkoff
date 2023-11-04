@@ -1,7 +1,7 @@
 package edu.hw5.task3;
 
 import java.time.LocalDate;
-
+@SuppressWarnings("FallThrough")
 public class RelativeDateParser implements Parser {
 
     public static final String TOMORROW = "tomorrow";
