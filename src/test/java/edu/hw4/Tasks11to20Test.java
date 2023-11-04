@@ -68,8 +68,9 @@ class Tasks11to20Test {
 
     @Test
     void sumWeightWithAgeFromKtoL() {
-        Assertions.assertEquals(20, Tasks11to20.sumWeightWithAgeFromKtoL(animals, 50, 100));
-        Assertions.assertEquals(521, Tasks11to20.sumWeightWithAgeFromKtoL(animals, 23, 500));
+        Assertions.assertEquals(2, Tasks11to20.sumWeightWithAgeFromKtoL(animals, 20, 100).size());
+        Assertions.assertEquals(1, Tasks11to20.sumWeightWithAgeFromKtoL(animals, 23, 35).size());
+        Assertions.assertEquals(501, Tasks11to20.sumWeightWithAgeFromKtoL(animals, 23, 35).get(Type.CAT));
     }
 
     @Test

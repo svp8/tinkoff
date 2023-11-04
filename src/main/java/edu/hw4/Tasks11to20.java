@@ -41,18 +41,17 @@ public final class Tasks11to20 {
             .anyMatch((animal) -> animal.type() == Type.DOG && animal.height() > k);
     }
 
-    public static Integer sumWeightWithAgeFromKtoL(List<Animal> animals, int k, int l) {
+    public static Map<Type, Integer> sumWeightWithAgeFromKtoL(List<Animal> animals, int k, int l) {
         return animals.stream()
             .filter((animal -> animal.age() >= k && animal.age() <= l))
-            .mapToInt(Animal::weight)
-            .sum();
+            .collect(Collectors.groupingBy(Animal::type, Collectors.summingInt(Animal::weight)));
     }
 
     public static List<Animal> sortByTypeSexName(List<Animal> animals) {
         return animals.stream()
             .sorted(Comparator.comparing(
                         Animal::type,
-                    Comparator.comparing(Enum::toString)
+                        Comparator.comparing(Enum::toString)
                     )
                     .thenComparing(Animal::sex)
                     .thenComparing(Animal::name)
