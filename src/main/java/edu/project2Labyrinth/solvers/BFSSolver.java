@@ -35,6 +35,9 @@ public class BFSSolver implements Solver {
                 }
             }
         }
+        if (relations.size() == 1 && !coordinate1.equals(coordinate2)) {
+            return null;
+        }
         return createPath(relations, coordinate2);
     }
 }

@@ -40,8 +40,9 @@ public record Labyrinth(int height, int width, List<Cell> cells) {
     }
 
     public static Cell checkNeighbourInGridBounds(List<Cell> grid, Cell neighbour) {
-        if (grid.contains(neighbour)) {
-            return grid.get(grid.indexOf(neighbour));
+        int index = grid.indexOf(neighbour);
+        if (index != -1) {
+            return grid.get(index);
         } else {
             return null;
         }

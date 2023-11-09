@@ -48,6 +48,9 @@ public class DFSSolver implements Solver {
                 }
             }
         }
+        if (relations.size() == 1 && !start.equals(end)) {
+            return null;
+        }
         return createPath(relations, current);
 
     }

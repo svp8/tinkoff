@@ -20,7 +20,7 @@ public class RandomizedDFSGenerator implements Generator {
         if (neighbours.size() == 1) {
             return neighbours.get(0);
         }
-        if (neighbours.size() > 0) {
+        if (!neighbours.isEmpty()) {
             return neighbours.get(random.nextInt(neighbours.size()));
         } else {
             return null;
@@ -30,7 +30,7 @@ public class RandomizedDFSGenerator implements Generator {
     @Override
     public Labyrinth generate(int height, int width) {
         Deque<Cell> stack = new ArrayDeque<>();
-        List<Cell> grid = init(height, width);
+        List<Cell> grid = Generator.init(height, width);
         Cell current = grid.get(0);
         stack.push(current);
         while (!stack.isEmpty()) {

@@ -15,7 +15,7 @@ public class HuntAndKillGenerator implements Generator {
 
     @Override
     public Labyrinth generate(int height, int width) {
-        List<Cell> grid = init(height, width);
+        List<Cell> grid = Generator.init(height, width);
         Cell current = grid.get(0);
         boolean[][] visited = new boolean[height][width];
         boolean flag = true;
@@ -25,7 +25,7 @@ public class HuntAndKillGenerator implements Generator {
             Cell next = null;
             if (neighbours.size() == 1) {
                 next = neighbours.get(0);
-            } else if (neighbours.size() > 0) {
+            } else if (!neighbours.isEmpty()) {
                 next = neighbours.get(random.nextInt(neighbours.size()));
             }
             if (next != null) {
@@ -34,9 +34,9 @@ public class HuntAndKillGenerator implements Generator {
             } else {
                 // hunt
                 Optional<Cell>
-                    opt = grid.parallelStream()
+                    opt = grid.stream()
                     .filter(c -> visited[c.getCoordinate().y()][c.getCoordinate().x()]
-                        && getUnvisitedNeighboursList(c, grid, visited).size() > 0)
+                        && !getUnvisitedNeighboursList(c, grid, visited).isEmpty())
                     .findAny();
                 if (opt.isPresent()) {
                     current = opt.get();
