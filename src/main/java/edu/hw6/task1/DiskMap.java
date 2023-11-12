@@ -1,18 +1,19 @@
-package edu.hw5;
+package edu.hw6.task1;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DiskMap implements Map<String, String> {
     File file;
@@ -29,7 +30,13 @@ public class DiskMap implements Map<String, String> {
 
     @Override
     public int size() {
-        return 0;
+        List<String> fileContent;
+        try {
+            fileContent = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+            return fileContent.size();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -45,7 +52,6 @@ public class DiskMap implements Map<String, String> {
             reader = new BufferedReader(new FileReader(file));
             String line = reader.readLine();
             while (line != null) {
-                System.out.println(line);
                 String tempKey = line.split(":")[0];
                 if (tempKey.equals(key)) {
                     found = true;
@@ -54,8 +60,7 @@ public class DiskMap implements Map<String, String> {
             }
             reader.close();
             return found;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
         }
         return false;
     }
@@ -68,22 +73,46 @@ public class DiskMap implements Map<String, String> {
 
     @Override
     public String get(Object key) {
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(file));
+            String line = reader.readLine();
+            while (line != null) {
+                String[] temp = line.split(":");
+                if (temp[0].equals(key)) {
+                    reader.close();
+                    return temp[1];
+                }
+                line = reader.readLine();
+            }
+        } catch (IOException ignored) {
+        }
         return null;
     }
 
     @Nullable
     @Override
     public String put(String key, String value) {
-        FileWriter fw = null;
+        List<String> fileContent = null;
+        boolean found = false;
         try {
-            fw = new FileWriter(file, true);
-            BufferedWriter bw = new BufferedWriter(fw);
-            if(containsKey(key)){
-                bw.write(key + ":" + value)
+            fileContent = new ArrayList<>(Files.readAllLines(file.toPath(), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        for (int i = 0; i < fileContent.size(); i++) {
+            String keyTemp = fileContent.get(i).split(":")[0];
+            if (keyTemp.equals(key)) {
+                found = true;
+                fileContent.set(i, key + ":" + value);
+                break;
             }
-            bw.write(key + ":" + value);
-            bw.newLine();
-            bw.close();
+        }
+        if (!found) {
+            fileContent.add(key + ":" + value);
+        }
+        try {
+            Files.write(file.toPath(), fileContent, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
