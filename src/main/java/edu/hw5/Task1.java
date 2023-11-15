@@ -24,7 +24,7 @@ public final class Task1 {
         }
         duration = duration.dividedBy(info.size());
         String hours = String.valueOf(duration.toHours());
-        String minutes = String.valueOf(duration.toMinutes() % MINUTE);
+        String minutes = String.valueOf(duration.toMinutesPart());
         return hours + "ч " + minutes + "м";
     }
 }

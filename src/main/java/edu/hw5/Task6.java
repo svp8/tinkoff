@@ -6,6 +6,10 @@ public final class Task6 {
     }
 
     public static boolean isSubString(String s, String t) {
-        return s.matches(".*" + t + ".*");
+        if (t == null) {
+            return false;
+        }
+        String forRegex = t.replace("\\", "\\\\");
+        return s.matches(".*" + forRegex + ".*");
     }
 }

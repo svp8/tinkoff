@@ -21,9 +21,9 @@ public final class Task3 {
             new DaysAgoDateParser(),
             new RelativeDateParser()
         );
-        Parser parser = parsers.stream().filter(p -> p.canParse(date)).findFirst().orElse(null);
-        if (parser != null) {
-            LocalDate localDate = parser.parse(date);
+        Optional<Parser> parser = parsers.stream().filter(p -> p.canParse(date)).findFirst();
+        if (parser.isPresent()) {
+            LocalDate localDate = parser.get().parse(date);
             return Optional.of(localDate);
         } else {
             return Optional.empty();

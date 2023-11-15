@@ -8,7 +8,7 @@ public final class Task7 {
     }
 
     public static boolean symbolsWith3length(String input) {
-        Pattern pattern1 = Pattern.compile("^[0,1]{2,}0$");
+        Pattern pattern1 = Pattern.compile("^[0,1]{2}0[0,1]*$");
         return pattern1.matcher(input).matches();
 
     }

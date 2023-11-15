@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class Task6Test {
 
     @ParameterizedTest
-    @CsvSource({"achfdbaabgabcaabg,abc", "tEst,E", "artborc,rt"})
+    @CsvSource({"achfdbaabgabcaabg,abc","assf\\daasda,f\\d", "tEst,E", "artborc,rt"})
     void isSubString(String S,String T) {
         Assertions.assertTrue(Task6.isSubString(S,T));
     }
