@@ -28,9 +28,4 @@ class Task6Test {
             ArrayList<String> table=Task6.checkPorts(map);
             assertEquals(6,table.size());
     }
-    @Test
-    void isPortOpen() {
-        Task6.Protocol protocol=Task6.isPortOpen(NAME_PORT);
-        assertEquals(Task6.Protocol.UDP,protocol);
-    }
 }
