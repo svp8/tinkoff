@@ -1,5 +1,9 @@
 package edu.hw6.task2;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,33 +16,45 @@ public final class Task2 {
     }
 
     public static Path cloneFile(Path path) throws IOException {
-        Pattern pattern1 = Pattern.compile("(.*)\\.(?!.*\\.)(.*)$");
-        Matcher matcher = pattern1.matcher(path.toString());
+        Path createdPath = path;
         if (Files.exists(path)) {
-            String name;
-            String extension;
-            if (matcher.matches()) {
-                name = matcher.group(1);
-                extension = matcher.group(2);
-                Path path1 = Path.of(name + " — копия." + extension);
-                int numberOfClone = 2;
-                while (Files.exists(path1)) {
-                    path1 = Path.of(String.format("%s — копия (%d).%s", name, numberOfClone, extension));
-                    numberOfClone++;
-                }
-                return Files.createFile(path1);
-            } else { //Если без расширения
-                name = path.toString();
-                Path path1 = Path.of(name + " — копия");
-                int numberOfClone = 2;
-                while (Files.exists(path1)) {
-                    path1 = Path.of(name + " — копия (" + numberOfClone + ")");
-                }
-                return Files.createFile(path1);
+            createdPath = getPath(path);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(path.toFile()));
+            BufferedOutputStream bufferedOutputStream =
+                new BufferedOutputStream(new FileOutputStream(createdPath.toFile()));
+            int length;
+            while ((length = bufferedInputStream.read()) > 0) {
+                bufferedOutputStream.write(length);
             }
-        } else {
-            return Files.createFile(path);
+            bufferedInputStream.close();
+            bufferedOutputStream.close();
         }
+        return createdPath;
     }
 
+    private static Path getPath(Path path) {
+        Pattern pattern1 = Pattern.compile("(.*)\\.(?!.*\\.)(.*)$");
+        Matcher matcher = pattern1.matcher(path.toString());
+        String name;
+        String extension;
+        Path path1;
+        if (matcher.matches()) {
+            name = matcher.group(1);
+            extension = matcher.group(2);
+            path1 = Path.of(name + " — копия." + extension);
+            int numberOfClone = 2;
+            while (Files.exists(path1)) {
+                path1 = Path.of(String.format("%s — копия (%d).%s", name, numberOfClone, extension));
+                numberOfClone++;
+            }
+        } else { //Если без расширения
+            name = path.toString();
+            path1 = Path.of(name + " — копия");
+            int numberOfClone = 2;
+            while (Files.exists(path1)) {
+                path1 = Path.of(name + " — копия (" + numberOfClone + ")");
+            }
+        }
+        return path1;
+    }
 }

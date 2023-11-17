@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DiskMapTest {
@@ -37,6 +39,19 @@ class DiskMapTest {
         diskMap.put("123","privet2");
         assertEquals(1,diskMap.size());
         assertEquals("privet2",diskMap.get("123"));
+
+    }
+    @Test
+    void getEntrySet() throws IOException {
+        DiskMap diskMap=new DiskMap(Path.of(Paths.get("")
+            .toAbsolutePath()
+            .toString(),"/src/test/java/edu/hw6/task1/map.txt"));
+        diskMap.put("123","privet1");
+        diskMap.put("1234","privet2");
+        Set<Map.Entry<String,String>> entrySet=diskMap.entrySet();
+        assertEquals(2,entrySet.size());
+        assertTrue(entrySet.contains(Map.entry("123","privet1")));
+        assertTrue(entrySet.contains(Map.entry("1234","privet2")));
 
     }
 }

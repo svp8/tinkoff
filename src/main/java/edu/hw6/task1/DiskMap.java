@@ -7,15 +7,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DiskMap implements Map<String, String> {
+public class DiskMap extends AbstractMap<String, String> {
     File file;
 
     public DiskMap(Path path) throws IOException {
@@ -27,68 +28,63 @@ public class DiskMap implements Map<String, String> {
         }
 
     }
-
-    @Override
-    public int size() {
-        List<String> fileContent;
-        try {
-            fileContent = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-            return fileContent.size();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-        BufferedReader reader;
-        boolean found = false;
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            String line = reader.readLine();
-            while (line != null) {
-                String tempKey = line.split(":")[0];
-                if (tempKey.equals(key)) {
-                    found = true;
-                }
-                line = reader.readLine();
-            }
-            reader.close();
-            return found;
-        } catch (IOException ignored) {
-        }
-        return false;
-    }
-
-    @Override
-    public boolean containsValue(Object value) {
-
-        return false;
-    }
-
-    @Override
-    public String get(Object key) {
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new FileReader(file));
-            String line = reader.readLine();
-            while (line != null) {
-                String[] temp = line.split(":");
-                if (temp[0].equals(key)) {
-                    reader.close();
-                    return temp[1];
-                }
-                line = reader.readLine();
-            }
-        } catch (IOException ignored) {
-        }
-        return null;
-    }
+//
+//    @Override
+//    public int size() {
+//        List<String> fileContent;
+//        try {
+//            fileContent = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+//            return fileContent.size();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+//
+//    @Override
+//    public boolean containsKey(Object key) {
+//        BufferedReader reader;
+//        boolean found = false;
+//        try {
+//            reader = new BufferedReader(new FileReader(file));
+//            String line = reader.readLine();
+//            while (line != null) {
+//                String tempKey = line.split(":")[0];
+//                if (tempKey.equals(key)) {
+//                    found = true;
+//                }
+//                line = reader.readLine();
+//            }
+//            reader.close();
+//            return found;
+//        } catch (IOException ignored) {
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public boolean containsValue(Object value) {
+//
+//        return false;
+//    }
+//
+//    @Override
+//    public String get(Object key) {
+//        BufferedReader reader;
+//        try {
+//            reader = new BufferedReader(new FileReader(file));
+//            String line = reader.readLine();
+//            while (line != null) {
+//                String[] temp = line.split(":");
+//                if (temp[0].equals(key)) {
+//                    reader.close();
+//                    return temp[1];
+//                }
+//                line = reader.readLine();
+//            }
+//        } catch (IOException ignored) {
+//        }
+//        return null;
+//    }
 
     @Nullable
     @Override
@@ -119,36 +115,23 @@ public class DiskMap implements Map<String, String> {
         return key;
     }
 
-    @Override
-    public String remove(Object key) {
-        return null;
-    }
-
-    @Override
-    public void putAll(@NotNull Map<? extends String, ? extends String> m) {
-
-    }
-
-    @Override
-    public void clear() {
-
-    }
-
-    @NotNull
-    @Override
-    public Set<String> keySet() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public Collection<String> values() {
-        return null;
-    }
-
     @NotNull
     @Override
     public Set<Entry<String, String>> entrySet() {
-        return null;
+
+        Set<Entry<String, String>> entrySet = new HashSet<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine();
+            while (line != null) {
+                String[] temp = line.split(":");
+                Entry<String, String> entry = Map.entry(temp[0], temp[1]);
+                entrySet.add(entry);
+                line = reader.readLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return entrySet;
     }
+
 }

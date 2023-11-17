@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Task2Test {
     ArrayList<Path> paths = new ArrayList<>();
@@ -31,6 +32,10 @@ public class Task2Test {
             .toAbsolutePath()
             .toString(), "/src/test/java/edu/hw6/task2/Tinkoff Bank Biggest Secret.txt"));
         paths.add(path);
+        List<String> lines=Files.readAllLines(path);
+
+        Assertions.assertEquals("123456789",lines.get(0));
+        Assertions.assertEquals("abc",lines.get(1));
         Assertions.assertTrue(path.endsWith("Tinkoff Bank Biggest Secret — копия.txt"));
     }
 
@@ -43,8 +48,11 @@ public class Task2Test {
                 .toString(), "/src/test/java/edu/hw6/task2/Tinkoff Bank Biggest Secret.txt"));
             paths.add(path);
         }
+        List<String> lines=Files.readAllLines(path);
 
         Assertions.assertTrue(path.endsWith("Tinkoff Bank Biggest Secret — копия (2).txt"));
+        Assertions.assertEquals("123456789",lines.get(0));
+        Assertions.assertEquals("abc",lines.get(1));
     }
 
     @Test
@@ -58,7 +66,10 @@ public class Task2Test {
             .toAbsolutePath()
             .toString(), "/src/test/java/edu/hw6/task2/Tinkoff Bank Biggest Secret.txt"));
         paths.add(path);
+        List<String> lines=Files.readAllLines(path);
 
+        Assertions.assertEquals("123456789",lines.get(0));
+        Assertions.assertEquals("abc",lines.get(1));
         Assertions.assertTrue(path.endsWith("Tinkoff Bank Biggest Secret — копия.txt"));
     }
 
@@ -79,7 +90,10 @@ public class Task2Test {
             .toAbsolutePath()
             .toString(), "/src/test/java/edu/hw6/task2/Tinkoff Bank Biggest Secret.txt"));
         paths.add(path);
+        List<String> lines=Files.readAllLines(path);
 
+        Assertions.assertEquals("123456789",lines.get(0));
+        Assertions.assertEquals("abc",lines.get(1));
         Assertions.assertTrue(path.endsWith("Tinkoff Bank Biggest Secret — копия (3).txt"));
     }
 }
