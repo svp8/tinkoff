@@ -28,64 +28,39 @@ public class DiskMap extends AbstractMap<String, String> {
         }
 
     }
-//
-//    @Override
-//    public int size() {
-//        List<String> fileContent;
-//        try {
-//            fileContent = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
-//            return fileContent.size();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    @Override
-//    public boolean containsKey(Object key) {
-//        BufferedReader reader;
-//        boolean found = false;
-//        try {
-//            reader = new BufferedReader(new FileReader(file));
-//            String line = reader.readLine();
-//            while (line != null) {
-//                String tempKey = line.split(":")[0];
-//                if (tempKey.equals(key)) {
-//                    found = true;
-//                }
-//                line = reader.readLine();
-//            }
-//            reader.close();
-//            return found;
-//        } catch (IOException ignored) {
-//        }
-//        return false;
-//    }
-//
-//    @Override
-//    public boolean containsValue(Object value) {
-//
-//        return false;
-//    }
-//
-//    @Override
-//    public String get(Object key) {
-//        BufferedReader reader;
-//        try {
-//            reader = new BufferedReader(new FileReader(file));
-//            String line = reader.readLine();
-//            while (line != null) {
-//                String[] temp = line.split(":");
-//                if (temp[0].equals(key)) {
-//                    reader.close();
-//                    return temp[1];
-//                }
-//                line = reader.readLine();
-//            }
-//        } catch (IOException ignored) {
-//        }
-//        return null;
-//    }
 
+    @Override
+    public String remove(Object key) {
+        List<String> fileContent = null;
+        String value = null;
+        try {
+            fileContent = new ArrayList<>(Files.readAllLines(file.toPath(), StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        for (int i = 0; i < fileContent.size(); i++) {
+            String keyTemp = fileContent.get(i).split(":")[0];
+            if (keyTemp.equals(key)) {
+                value=fileContent.get(i).split(":")[1];
+                fileContent.remove(i);
+                break;
+            }
+        }
+        try {
+            Files.write(file.toPath(), fileContent, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return value;
+    }
+    @Override
+    public void clear() {
+        try {
+            Files.write(file.toPath(), new ArrayList<>(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Nullable
     @Override
     public String put(String key, String value) {

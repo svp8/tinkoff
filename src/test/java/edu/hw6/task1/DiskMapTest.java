@@ -54,4 +54,31 @@ class DiskMapTest {
         assertTrue(entrySet.contains(Map.entry("1234","privet2")));
 
     }
+
+    @Test
+    void remove() throws IOException {
+        DiskMap diskMap=new DiskMap(Path.of(Paths.get("")
+            .toAbsolutePath()
+            .toString(),"/src/test/java/edu/hw6/task1/map.txt"));
+        diskMap.put("123","privet123");
+        diskMap.put("1","privet1");
+        diskMap.put("2","privet2");
+        String value=diskMap.remove("1");
+        Set<Map.Entry<String,String>> entrySet=diskMap.entrySet();
+        assertEquals(2,diskMap.size());
+        assertEquals("privet1",value);
+        assertTrue(entrySet.contains(Map.entry("123","privet123")));
+        assertTrue(entrySet.contains(Map.entry("2","privet2")));
+    }
+    @Test
+    void clear() throws IOException {
+        DiskMap diskMap=new DiskMap(Path.of(Paths.get("")
+            .toAbsolutePath()
+            .toString(),"/src/test/java/edu/hw6/task1/map.txt"));
+        diskMap.put("123","privet123");
+        diskMap.put("1","privet1");
+        diskMap.put("2","privet2");
+        diskMap.clear();
+        assertEquals(0,diskMap.size());
+    }
 }

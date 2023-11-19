@@ -19,15 +19,7 @@ public final class Task2 {
         Path createdPath = path;
         if (Files.exists(path)) {
             createdPath = getPath(path);
-            BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(path.toFile()));
-            BufferedOutputStream bufferedOutputStream =
-                new BufferedOutputStream(new FileOutputStream(createdPath.toFile()));
-            int length;
-            while ((length = bufferedInputStream.read()) > 0) {
-                bufferedOutputStream.write(length);
-            }
-            bufferedInputStream.close();
-            bufferedOutputStream.close();
+            Files.copy(path,createdPath);
         }
         return createdPath;
     }

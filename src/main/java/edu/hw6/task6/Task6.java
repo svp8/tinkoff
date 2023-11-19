@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("RegexpSinglelineJava")
@@ -13,11 +14,20 @@ public final class Task6 {
 
     }
 
-    public static ArrayList<String> checkPorts(Map<Integer, String> services) {
+    public static Map<Integer, Protocol> checkPorts(Map<Integer, String> services) {
+        Map<Integer, Protocol> serviceAvailability=new HashMap<>();
+        services.forEach((port, service) -> {
+            Protocol protocol = isPortOpen(port);
+            serviceAvailability.put(port,protocol);
+        });
+        return serviceAvailability;
+    }
+    public static ArrayList<String> getTable(Map<Integer, String> services) {
+        Map<Integer, Protocol> serviceAvailability=checkPorts(services);
         ArrayList<String> info = new ArrayList<>();
         services.forEach((port, service) -> {
             String name = "";
-            Protocol protocol = isPortOpen(port);
+            Protocol protocol = serviceAvailability.get(port);
             if (!protocol.equals(Protocol.NONE)) {
                 name = service;
             }

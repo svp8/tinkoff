@@ -2,7 +2,6 @@ package edu.hw6.task6;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +15,7 @@ class Task6Test {
     public static final int POSTGRES_PORT = 5432;
     public static final int MYSQL_PORT = 3306;
     @Test
-    void checkPorts() {
+    void getTable() {
         Map<Integer, String> map = Map.of(
             MYSQL_PORT, "mySql",
             POSTGRES_PORT, "postgres",
@@ -25,7 +24,15 @@ class Task6Test {
             DATAGRAM_PORT, "Служба датаграмм NetBIOS",
             SESSION_PORT, "Служба сеансов NetBIOS"
         );
-            ArrayList<String> table=Task6.checkPorts(map);
-            assertEquals(6,table.size());
+            ArrayList<String> table=Task6.getTable(map);
+            assertEquals(map.size(),table.size());
+    }
+    @Test
+    void testAvailability(){
+        Map<Integer, String> map = Map.of(
+            MYSQL_PORT, "mySql"
+        );
+        Map<Integer,Task6.Protocol> services=Task6.checkPorts(map);
+        assertEquals(Task6.Protocol.TCP,services.get(MYSQL_PORT));
     }
 }
