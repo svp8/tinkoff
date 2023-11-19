@@ -1,9 +1,5 @@
 package edu.hw6.task2;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,7 +15,7 @@ public final class Task2 {
         Path createdPath = path;
         if (Files.exists(path)) {
             createdPath = getPath(path);
-            Files.copy(path,createdPath);
+            Files.copy(path, createdPath);
         }
         return createdPath;
     }

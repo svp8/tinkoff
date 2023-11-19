@@ -41,7 +41,7 @@ public class DiskMap extends AbstractMap<String, String> {
         for (int i = 0; i < fileContent.size(); i++) {
             String keyTemp = fileContent.get(i).split(":")[0];
             if (keyTemp.equals(key)) {
-                value=fileContent.get(i).split(":")[1];
+                value = fileContent.get(i).split(":")[1];
                 fileContent.remove(i);
                 break;
             }
@@ -53,6 +53,7 @@ public class DiskMap extends AbstractMap<String, String> {
         }
         return value;
     }
+
     @Override
     public void clear() {
         try {
@@ -61,6 +62,7 @@ public class DiskMap extends AbstractMap<String, String> {
             throw new RuntimeException(e);
         }
     }
+
     @Nullable
     @Override
     public String put(String key, String value) {

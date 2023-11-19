@@ -15,15 +15,16 @@ public final class Task6 {
     }
 
     public static Map<Integer, Protocol> checkPorts(Map<Integer, String> services) {
-        Map<Integer, Protocol> serviceAvailability=new HashMap<>();
+        Map<Integer, Protocol> serviceAvailability = new HashMap<>();
         services.forEach((port, service) -> {
             Protocol protocol = isPortOpen(port);
-            serviceAvailability.put(port,protocol);
+            serviceAvailability.put(port, protocol);
         });
         return serviceAvailability;
     }
+
     public static ArrayList<String> getTable(Map<Integer, String> services) {
-        Map<Integer, Protocol> serviceAvailability=checkPorts(services);
+        Map<Integer, Protocol> serviceAvailability = checkPorts(services);
         ArrayList<String> info = new ArrayList<>();
         services.forEach((port, service) -> {
             String name = "";
