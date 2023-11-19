@@ -30,9 +30,9 @@ class Task6Test {
     @Test
     void testAvailability(){
         Map<Integer, String> map = Map.of(
-            MYSQL_PORT, "mySql"
+           POSTGRES_PORT, "postgres"
         );
         Map<Integer,Task6.Protocol> services=Task6.checkPorts(map);
-        assertEquals(Task6.Protocol.TCP,services.get(MYSQL_PORT));
+        assertEquals(Task6.Protocol.TCP,services.get(POSTGRES_PORT));
     }
 }
