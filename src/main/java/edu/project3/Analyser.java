@@ -5,22 +5,8 @@ import edu.project3.stats.TopRequestCountStatistic;
 import edu.project3.stats.TopRequestStatistic;
 import edu.project3.stats.TopRequestTypeStatistic;
 import edu.project3.stats.TopResponseCodeStatistic;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -28,8 +14,7 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,11 +39,9 @@ public class Analyser {
     List<Log> logs;
     List<String> filenames;
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Path ROOT = Path.of(Paths.get("")
-        .toAbsolutePath()
-        .toString(), "src/main/java/edu/project3");
+    private static final Path ROOT = Path.of(System.getProperty("user.home"));
 
-    public Analyser(LocalDate from, LocalDate to, Format format, ArrayList<Log> logs, List<String> filenames) {
+    public Analyser(LocalDate from, LocalDate to, Format format, List<Log> logs, List<String> filenames) {
         this.from = from;
         this.to = to;
         this.format = format;
@@ -67,33 +50,29 @@ public class Analyser {
     }
 
     public static void main(String[] args) {
-        Analyser analyser = getValuesFromConsole(args);
-        analyser.analyse();
+        Analyser analyser = getValuesFromConsole(args, ROOT);
+        analyser.analyse(ROOT);
     }
 
-    public static Analyser getValuesFromConsole(String[] args) {
+    public static Analyser getValuesFromConsole(String[] args, Path root) {
+        if (args.length % 2 != 0) {
+            throw new IllegalArgumentException("Wrong amount of arguments");
+        }
         String path;
         LocalDate from = LocalDate.MIN;
         LocalDate to = LocalDate.MAX;
         Format format = Format.MARKDOWN;
-        ArrayList<Log> logs = new ArrayList<>();
+        List<Log> logs = new ArrayList<>();
         List<String> filenames = new ArrayList<>();
-        if (args.length % 2 != 0) {
-            throw new IllegalArgumentException("Wrong amount of arguments");
-        }
         for (int i = 0; i < args.length - 1; i++) {
             switch (args[i]) {
                 case "--path":
                     path = args[i + 1];
                     try {
-                        Map<String, List<String>> files = getFiles(path);
-                        files.forEach((key, value) -> {
-                            filenames.add(key);
-                        });
+                        Map<String, List<String>> files = FileUtil.getFiles(path, root);
+                        filenames.addAll(files.keySet());
                         List<String> lines = new ArrayList<>();
-                        files.forEach((key, value) -> {
-                            lines.addAll(value);
-                        });
+                        files.values().forEach(lines::addAll);
                         logs = convertToLog(lines);
                     } catch (IOException | InterruptedException e) {
                         throw new RuntimeException(e);
@@ -148,7 +127,7 @@ public class Analyser {
         return Statistic.createTable(lines, columnNames, title, format);
     }
 
-    public Path analyse() {
+    public Path analyse(Path rootToSave) {
         //логи с from до to
         logs = logs.stream()
             .filter(log ->
@@ -162,77 +141,16 @@ public class Analyser {
             new TopRequestTypeStatistic(),
             new TopResponseCodeStatistic()
         );
-        //Все строчки для статистики
-        List<String> lines = createGeneralStatistic();
+        //Все строчки для статистики, сначала добавляем общую информацию
+        List<String> lines = new ArrayList<>(createGeneralStatistic());
         Format finalFormat = format;
         statistics.forEach(x -> lines.addAll(x.compute(logs, finalFormat)));
-        Path path = createFile(lines);
+        Path path = FileUtil.createFileWithFormat(lines, format, rootToSave);
         LOGGER.info("Statistic created: " + path.toString());
         return path;
     }
 
-    public Path createFile(List<String> lines) {
-        Path file;
-
-        if (format.equals(Format.MARKDOWN)) {
-            file = Path.of(ROOT.toString(), "statistic.md");
-        } else {
-            file = Path.of(ROOT.toString(), "statistic.adoc");
-        }
-        try {
-            if (!file.toFile().exists()) {
-                Files.createFile(file);
-            }
-            try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(file.toFile(), false))) {
-                for (String line : lines) {
-                    fileWriter.write(line);
-                    fileWriter.newLine();
-                }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return file;
-    }
-
-    public static Map<String, List<String>> getFiles(String path) throws IOException, InterruptedException {
-        //Название файла - строки файла
-        if (path.startsWith("https://")) {
-            URI uri = null;
-            try {
-                uri = new URI(path);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-            HttpClient httpClient = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .build();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            String body = response.body();
-            String[] arr = body.split("\n");
-            HashMap<String, List<String>> files = new HashMap<>();
-            files.put(request.uri().getPath(), Arrays.stream(arr).toList());
-            return files;
-        } else {
-            List<Path> paths = findMe(ROOT, "glob:**/" + path);
-            HashMap<String, List<String>> files = new HashMap<>();
-            paths.forEach((p) -> {
-                try {
-                    files.put(p.getFileName().toString(), Files.readAllLines(p));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            return files;
-
-        }
-    }
-
-    public static ArrayList<Log> convertToLog(List<String> lines) {
+    public static List<Log> convertToLog(List<String> lines) {
         ArrayList<Log> logs = new ArrayList<>();
         Pattern pattern = Pattern.compile("(.*) - (.*) \\[(.*)\\] \"((\\w*) (.*))\" (\\d*) (\\d*) \"(.*)\" \"(.*)\"");
         for (String line : lines) {
@@ -265,22 +183,7 @@ public class Analyser {
             }
         }
 
-        return logs;
-    }
-
-    private static List<Path> findMe(Path srcPath, String matcherPattern) throws IOException {
-        final List<Path> filePaths = new ArrayList<>();
-        final PathMatcher matcher = FileSystems.getDefault().getPathMatcher(matcherPattern);
-        Files.walkFileTree(srcPath, new SimpleFileVisitor<>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                if (matcher.matches(file)) {
-                    filePaths.add(file);
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        });
-        return filePaths;
+        return Collections.unmodifiableList(logs);
     }
 
     public LocalDate getFrom() {

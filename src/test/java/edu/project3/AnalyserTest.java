@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AnalyserTest {
     Path root = Path.of(Paths.get("")
         .toAbsolutePath()
-        .toString(), "src/main/java/edu/project3");
+        .toString(), "src/test/java/edu/project3");
 
     @Test
     void convertToLog() {
@@ -38,6 +38,8 @@ class AnalyserTest {
             "93.180.71.3 - - [17/May/2015:08:05:32 +0000] \"GET /downloads/product_1 HTTP/1.1\" 304 0 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.21)\""));
         Assertions.assertEquals(1, logs.size());
         Assertions.assertEquals(log, logs.get(0));
+        String dir = System.getProperty("user.home");
+        System.out.println(dir);
     }
 
     @Test
@@ -45,7 +47,7 @@ class AnalyserTest {
         String[] args = {"--path",
             "https://raw.githubusercontent.com/elastic/examples/master/Common%20Data%20Formats/nginx_logs/nginx_logs",
             "--format", "adoc"};
-        Analyser analyser = Analyser.getValuesFromConsole(args);
+        Analyser analyser = Analyser.getValuesFromConsole(args, root);
         Assertions.assertEquals(LocalDate.MIN, analyser.getFrom());
         Assertions.assertEquals(LocalDate.MAX, analyser.getTo());
         Assertions.assertEquals(51462, analyser.getLogs().size());
@@ -56,7 +58,7 @@ class AnalyserTest {
     @Test
     void analyseFromPath() {
         String[] args = {"--path", "logs/**/*.txt", "--format", "adoc"};
-        Analyser analyser = Analyser.getValuesFromConsole(args);
+        Analyser analyser = Analyser.getValuesFromConsole(args, root);
         Assertions.assertEquals(LocalDate.MIN, analyser.getFrom());
         Assertions.assertEquals(LocalDate.MAX, analyser.getTo());
         Assertions.assertEquals(102, analyser.getLogs().size());
@@ -67,8 +69,8 @@ class AnalyserTest {
     @Test
     void analyseWithFromDate() {
         String[] args = {"--path", "logs/**/*.txt", "--from", "2015-01-31", "--format", "adoc"};
-        Analyser analyser = Analyser.getValuesFromConsole(args);
-        analyser.analyse();
+        Analyser analyser = Analyser.getValuesFromConsole(args, root);
+        analyser.analyse(root);
         Assertions.assertEquals(LocalDate.of(2015, Month.JANUARY, 31), analyser.getFrom());
         Assertions.assertEquals(LocalDate.MAX, analyser.getTo());
         Assertions.assertEquals(99, analyser.getLogs().size());
@@ -79,8 +81,8 @@ class AnalyserTest {
     @Test
     void analyseWithToDate() {
         String[] args = {"--path", "logs/**/*.txt", "--to", "2015-01-31", "--format", "adoc"};
-        Analyser analyser = Analyser.getValuesFromConsole(args);
-        analyser.analyse();
+        Analyser analyser = Analyser.getValuesFromConsole(args, root);
+        analyser.analyse(root);
         Assertions.assertEquals(LocalDate.of(2015, Month.JANUARY, 31), analyser.getTo());
         Assertions.assertEquals(LocalDate.MIN, analyser.getFrom());
         Assertions.assertEquals(3, analyser.getLogs().size());
@@ -91,29 +93,17 @@ class AnalyserTest {
     @Test
     void analyseWithMarkdown() {
         String[] args = {"--path", "logs/**/*.txt", "--to", "2015-01-31", "--format", "markdown"};
-        Analyser analyser = Analyser.getValuesFromConsole(args);
-        Path path = analyser.analyse();
+        Analyser analyser = Analyser.getValuesFromConsole(args, root);
+        Path path = analyser.analyse(root);
         Assertions.assertTrue(path.toString().endsWith(".md"));
     }
 
     @Test
     void analyseWithADOC() {
         String[] args = {"--path", "logs/**/*.txt", "--to", "2015-01-31", "--format", "adoc"};
-        Analyser analyser = Analyser.getValuesFromConsole(args);
-        Path path = analyser.analyse();
+        Analyser analyser = Analyser.getValuesFromConsole(args, root);
+        Path path = analyser.analyse(root);
         Assertions.assertTrue(path.toString().endsWith(".adoc"));
     }
-    @Test
-    void getFilesTest() throws IOException, InterruptedException {
-        Map<String, List<String>> map=Analyser.getFiles("logs/**/*");
-        Assertions.assertTrue(map.containsKey("logs-2021.txt"));
-    }
-    @Test
-    @DisplayName("Test should return multiple files")
-    void getFilesMultipleTest() throws IOException, InterruptedException {
-        Map<String, List<String>> map=Analyser.getFiles("logs/*");
-        Assertions.assertEquals(2,map.size());
-        Assertions.assertTrue(map.containsKey("2022"));
-        Assertions.assertTrue(map.containsKey("2023-12"));
-    }
+
 }

@@ -3,6 +3,7 @@ package edu.project3.stats;
 import edu.project3.Format;
 import edu.project3.Log;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("MultipleStringLiterals")
@@ -11,13 +12,13 @@ public interface Statistic {
 
     static List<String> createTable(List<List<String>> lines, List<String> columnNames, String title, Format format) {
         if (format.equals(Format.MARKDOWN)) {
-            return createTableMD(lines, columnNames, title);
+            return Collections.unmodifiableList(createTableMD(lines, columnNames, title));
         } else {
-            return createTableADOC(lines, columnNames, title);
+            return Collections.unmodifiableList(createTableADOC(lines, columnNames, title));
         }
     }
 
-    static List<String> createTableMD(List<List<String>> lines, List<String> columnNames, String title) {
+    private static List<String> createTableMD(List<List<String>> lines, List<String> columnNames, String title) {
         List<String> convertedLines = new ArrayList<>();
         convertedLines.add("#### " + title);
         convertedLines.add("");
@@ -49,7 +50,7 @@ public interface Statistic {
         return convertedLines;
     }
 
-    static List<String> createTableADOC(List<List<String>> lines, List<String> columnNames, String title) {
+    private static List<String> createTableADOC(List<List<String>> lines, List<String> columnNames, String title) {
         List<String> convertedLines = new ArrayList<>();
         convertedLines.add("*" + title + "*");
         convertedLines.add("");

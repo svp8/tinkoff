@@ -3,7 +3,6 @@ package edu.project3.stats;
 import edu.project3.Format;
 import edu.project3.Log;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,11 +19,11 @@ public class TopRequestStatistic implements Statistic {
                 Collectors.counting()
             ));
         List<Map.Entry<String, Long>> sortedTop =
-            stats.entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).toList().reversed().stream()
+            stats.entrySet().stream().sorted((x, y) -> Long.compare(y.getValue(), x.getValue()))
                 .limit(MAX_SIZE).toList();
         List<List<String>> lines = new ArrayList<>();
         for (int i = 0; i < sortedTop.size(); i++) {
-            List<String> line = new ArrayList<>();
+            List<String> line = new ArrayList<>(2);
             String request = sortedTop.get(i).getKey();
             Long count = sortedTop.get(i).getValue();
             line.add(request);

@@ -34,6 +34,7 @@ class StatisticTest {
         lines.forEach(System.out::println);
         Assertions.assertTrue(lines.get(5).contains("|65.39.197.164 |5"));
     }
+
     @Test
     void computeTopRequestStatistic() {
         Statistic statistic = new TopRequestStatistic();
@@ -41,6 +42,7 @@ class StatisticTest {
         lines.forEach(System.out::println);
         Assertions.assertTrue(lines.get(5).contains("/downloads/product_1 |5"));
     }
+
     @Test
     void computeTopRequestTypeStatistic() {
         Statistic statistic = new TopRequestTypeStatistic();
@@ -48,6 +50,7 @@ class StatisticTest {
         lines.forEach(System.out::println);
         Assertions.assertTrue(lines.get(5).contains("|GET |5"));
     }
+
     @Test
     void computeTopResponseCodeStatistic() {
         Statistic statistic = new TopResponseCodeStatistic();

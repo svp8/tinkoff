@@ -3,7 +3,6 @@ package edu.project3.stats;
 import edu.project3.Format;
 import edu.project3.Log;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,6 +10,7 @@ import java.util.stream.Collectors;
 public class TopResponseCodeStatistic implements Statistic {
 
     public static final int MAX_SIZE = 3;
+    public static final int INITIAL_CAPACITY = 3;
 
     @Override
     public List<String> compute(List<Log> logs, Format format) {
@@ -21,11 +21,11 @@ public class TopResponseCodeStatistic implements Statistic {
             ));
 
         List<Map.Entry<Integer, Long>> sortedTop =
-            stats.entrySet().stream().sorted(Comparator.comparingLong(Map.Entry::getValue)).toList().reversed().stream()
+            stats.entrySet().stream().sorted((x, y) -> Long.compare(y.getValue(), x.getValue()))
                 .limit(MAX_SIZE).toList();
         List<List<String>> lines = new ArrayList<>();
         for (int i = 0; i < sortedTop.size(); i++) {
-            List<String> line = new ArrayList<>();
+            List<String> line = new ArrayList<>(INITIAL_CAPACITY);
             Integer code = sortedTop.get(i).getKey();
             Long count = sortedTop.get(i).getValue();
             line.add(String.valueOf(code));
