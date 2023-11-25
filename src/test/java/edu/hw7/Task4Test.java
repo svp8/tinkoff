@@ -31,7 +31,7 @@ class Task4Test {
 
     @Test
     void compare() throws InterruptedException {
-        int n = 1000000;
+        int n = 1000;
         long start = System.currentTimeMillis();
         logger.info(Task4.calculatePi(n));
         long end = System.currentTimeMillis();

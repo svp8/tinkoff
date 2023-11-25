@@ -14,49 +14,63 @@ public class PersonDatabaseLock implements PersonDatabase {
 
     @Override
     public void add(Person person) {
-        lock.writeLock().lock();
-        idCache.put(person.id(), person);
-        nameCache.put(person.name(), person);
-        addressCache.put(person.address(), person);
-        phoneCache.put(person.phoneNumber(), person);
-        lock.writeLock().unlock();
+        try {
+            lock.writeLock().lock();
+            idCache.put(person.id(), person);
+            nameCache.put(person.name(), person);
+            addressCache.put(person.address(), person);
+            phoneCache.put(person.phoneNumber(), person);
+        } finally {
+            lock.writeLock().unlock();
+        }
     }
 
     @Override
     public void delete(int id) {
-        lock.writeLock().lock();
-        if (idCache.containsKey(id)) {
-            Person person = idCache.get(id);
-            nameCache.remove(person.name());
-            addressCache.remove(person.address());
-            phoneCache.remove(person.phoneNumber());
-            idCache.remove(id);
+        try {
+            lock.writeLock().lock();
+            if (idCache.containsKey(id)) {
+                Person person = idCache.get(id);
+                nameCache.remove(person.name());
+                addressCache.remove(person.address());
+                phoneCache.remove(person.phoneNumber());
+                idCache.remove(id);
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
-        lock.writeLock().unlock();
     }
 
     @Override
     public @Nullable Person findByName(String name) {
-        lock.readLock().lock();
-        Person person = nameCache.get(name);
-        lock.readLock().unlock();
-        return person;
-
+        try {
+            lock.readLock().lock();
+            Person person = nameCache.get(name);
+            return person;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public @Nullable Person findByAddress(String address) {
-        lock.readLock().lock();
-        Person person = addressCache.get(address);
-        lock.readLock().unlock();
-        return person;
+        try {
+            lock.readLock().lock();
+            Person person = addressCache.get(address);
+            return person;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @Override
     public @Nullable Person findByPhone(String phone) {
-        lock.readLock().lock();
-        Person person = phoneCache.get(phone);
-        lock.readLock().unlock();
-        return person;
+        try {
+            lock.readLock().lock();
+            Person person = phoneCache.get(phone);
+            return person;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 }

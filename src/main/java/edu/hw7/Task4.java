@@ -2,6 +2,9 @@ package edu.hw7;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import static java.lang.Math.pow;
 
@@ -34,22 +37,22 @@ public final class Task4 {
         final AtomicInteger circleCount = new AtomicInteger(0);
         SecureRandom random = new SecureRandom();
         int threadCount = 2;
-        Runnable runnable = () -> {
+        Callable<Void> callable = () -> {
             for (int i = 0; i < n / threadCount; i++) {
                 if ((pow(random.nextDouble(0, 1), 2) + pow(random.nextDouble(0, 1), 2)) < 1) {
                     circleCount.incrementAndGet();
                 }
                 totalCount.incrementAndGet();
             }
+            return null;
         };
 
-        ArrayList<Thread> threads = new ArrayList<>();
+        ArrayList<Callable<Void>> tasks = new ArrayList<>();
         for (int i = 0; i < threadCount; i++) {
-            threads.add(new Thread(runnable));
+            tasks.add(callable);
         }
-        threads.forEach(Thread::start);
-        for (Thread thread : threads) {
-            thread.join();
+        try (ExecutorService executor = Executors.newFixedThreadPool(threadCount)) {
+            executor.invokeAll(tasks);
         }
         double pi = FOUR * (circleCount.doubleValue() / totalCount.doubleValue());
         return pi;
