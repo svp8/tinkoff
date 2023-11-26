@@ -3,15 +3,22 @@ package edu.project3.stats;
 import edu.project3.Analyser;
 import edu.project3.Format;
 import edu.project3.Log;
+import edu.project3.LogParser;
+import edu.project3.table.TableCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StatisticTest {
     static List<Log> logs;
+    TableCreator tableCreator = TableCreator.getCreator(Format.ADOC);
 
     @BeforeAll static void init() {
         List<String> lines = List.of(
@@ -24,38 +31,25 @@ class StatisticTest {
             "66.249.65.3 - - [06/Nov/2014:19:11:24 +0600] \"DELETE /?q=%E0%A6%AB%E0%A6%BE%E0%A7%9F%E0%A6%BE%E0%A6%B0 HTTP/1.1\" 200 4223 \"-\" \"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)\"",
             "66.249.65.62 - - [06/Nov/2014:19:12:14 +0600] \"GET /?q=%E0%A6%A6%E0%A7%8B%E0%A7%9F%E0%A6%BE HTTP/1.1\" 200 4356 \"-\" \"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)\""
         );
-        logs = Analyser.convertToLog(lines);
+
+        logs = LogParser.parse(lines);
     }
 
-    @Test
-    void computeTopRequestCountStatistic() {
-        Statistic statistic = new TopRequestCountStatistic();
-        List<String> lines = statistic.compute(logs, Format.ADOC);
-        lines.forEach(System.out::println);
-        Assertions.assertTrue(lines.get(5).contains("|65.39.197.164 |5"));
+    public static Stream<Arguments> compute() {
+        return Stream.of(
+            Arguments.of(new TopRequestCountStatistic(), "|65.39.197.164 |5"),
+            Arguments.of(new TopRequestStatistic(), "/downloads/product_1 |5"),
+            Arguments.of(new TopRequestTypeStatistic(), "|GET |5"),
+            Arguments.of(new TopResponseCodeStatistic(), "|404 |Not Found |6 ")
+        );
     }
 
-    @Test
-    void computeTopRequestStatistic() {
-        Statistic statistic = new TopRequestStatistic();
-        List<String> lines = statistic.compute(logs, Format.ADOC);
+    @ParameterizedTest(name = "{0}")
+    @MethodSource
+    void compute(Statistic statistic, String expected) {
+        List<String> lines = statistic.compute(logs, tableCreator);
         lines.forEach(System.out::println);
-        Assertions.assertTrue(lines.get(5).contains("/downloads/product_1 |5"));
+        Assertions.assertTrue(lines.get(5).contains(expected));
     }
 
-    @Test
-    void computeTopRequestTypeStatistic() {
-        Statistic statistic = new TopRequestTypeStatistic();
-        List<String> lines = statistic.compute(logs, Format.ADOC);
-        lines.forEach(System.out::println);
-        Assertions.assertTrue(lines.get(5).contains("|GET |5"));
-    }
-
-    @Test
-    void computeTopResponseCodeStatistic() {
-        Statistic statistic = new TopResponseCodeStatistic();
-        List<String> lines = statistic.compute(logs, Format.ADOC);
-        lines.forEach(System.out::println);
-        Assertions.assertTrue(lines.get(5).contains("|404 |Not Found |6 "));
-    }
 }

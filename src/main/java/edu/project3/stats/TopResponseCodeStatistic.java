@@ -1,7 +1,7 @@
 package edu.project3.stats;
 
-import edu.project3.Format;
 import edu.project3.Log;
+import edu.project3.table.TableCreator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ public class TopResponseCodeStatistic implements Statistic {
     public static final int INITIAL_CAPACITY = 3;
 
     @Override
-    public List<String> compute(List<Log> logs, Format format) {
+    public List<String> compute(List<Log> logs, TableCreator tableCreator) {
         Map<Integer, Long> stats =
             logs.stream().collect(Collectors.groupingBy(
                 Log::status,
@@ -42,6 +42,6 @@ public class TopResponseCodeStatistic implements Statistic {
         List<String> columnNames = List.of("Код", "Имя", "Количество");
         String title = "Коды ответа";
 
-        return Statistic.createTable(lines, columnNames, title, format);
+        return tableCreator.createTable(lines, columnNames, title);
     }
 }

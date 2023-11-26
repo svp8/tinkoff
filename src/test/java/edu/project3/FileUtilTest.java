@@ -22,24 +22,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FileUtilTest {
-    Path root = Path.of(Paths.get("")
-        .toAbsolutePath()
-        .toString(), "src/test/java/edu/project3");
-
-    @Test
-    void getFilesTest() throws IOException, InterruptedException {
-        Map<String, List<String>> map = FileUtil.getFiles("logs/**/*", root);
-        Assertions.assertTrue(map.containsKey("logs-2021.txt"));
-    }
-
-    @Test
-    @DisplayName("Test should return multiple files")
-    void getFilesMultipleTest() throws IOException, InterruptedException {
-        Map<String, List<String>> map = FileUtil.getFiles("logs/*", root);
-        Assertions.assertEquals(2, map.size());
-        Assertions.assertTrue(map.containsKey("2022"));
-        Assertions.assertTrue(map.containsKey("2023-12"));
-    }
+    Path root = Path.of("src/main/resources");
 
     @Test
     void createFileWithFormatADOC() throws IOException {

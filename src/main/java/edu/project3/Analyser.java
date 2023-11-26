@@ -1,50 +1,42 @@
 package edu.project3;
 
+import edu.project3.finders.DirectoryFinder;
+import edu.project3.finders.Finder;
+import edu.project3.finders.URLFinder;
 import edu.project3.stats.Statistic;
 import edu.project3.stats.TopRequestCountStatistic;
 import edu.project3.stats.TopRequestStatistic;
 import edu.project3.stats.TopRequestTypeStatistic;
 import edu.project3.stats.TopResponseCodeStatistic;
-import java.io.IOException;
+import edu.project3.table.TableCreator;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("UncommentedMain")
 public class Analyser {
     public static final String EMPTY = "---";
-    public static final int DATETIME = 3;
-    public static final int REQUEST_TYPE = 5;
-    public static final int REQUEST = 6;
-    public static final int STATUS = 7;
-    public static final int BYTES = 8;
-    public static final int REFERER = 9;
-    public static final int USER_AGENT = 10;
     LocalDate from;
     LocalDate to;
     Format format;
     List<Log> logs;
     List<String> filenames;
+    TableCreator tableCreator;
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Path ROOT = Path.of(System.getProperty("user.home"));
+    private static final Path ROOT = Path.of(System.getProperty("user.dir"));
 
     public Analyser(LocalDate from, LocalDate to, Format format, List<Log> logs, List<String> filenames) {
         this.from = from;
         this.to = to;
         this.format = format;
+        tableCreator = TableCreator.getCreator(format);
         this.logs = logs;
         this.filenames = filenames;
     }
@@ -68,15 +60,19 @@ public class Analyser {
             switch (args[i]) {
                 case "--path":
                     path = args[i + 1];
-                    try {
-                        Map<String, List<String>> files = FileUtil.getFiles(path, root);
-                        filenames.addAll(files.keySet());
-                        List<String> lines = new ArrayList<>();
-                        files.values().forEach(lines::addAll);
-                        logs = convertToLog(lines);
-                    } catch (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                    Finder finder;
+                    Map<String, List<String>> files;
+                    if (path.startsWith("https://")) {
+                        finder = new URLFinder();
+                        files = finder.find(path, root);
+                    } else {
+                        finder = new DirectoryFinder();
+                        files = finder.find(path, root);
                     }
+                    filenames.addAll(files.keySet());
+                    List<String> lines = new ArrayList<>();
+                    files.values().forEach(lines::addAll);
+                    logs = LogParser.parse(lines);
                     break;
                 case "--from":
                     from = LocalDate.parse(args[i + 1]);
@@ -89,7 +85,6 @@ public class Analyser {
                     break;
                 default:
                     break;
-
             }
         }
         if (logs.isEmpty()) {
@@ -124,7 +119,8 @@ public class Analyser {
         long sumOfBytes = logs.stream().mapToLong(Log::bytesSend).sum();
 
         lines.add(List.of("Средний размер ответа", sumOfBytes / logs.size() + "b"));
-        return Statistic.createTable(lines, columnNames, title, format);
+        List<String> table = tableCreator.createTable(lines, columnNames, title);
+        return table;
     }
 
     public Path analyse(Path rootToSave) {
@@ -143,47 +139,10 @@ public class Analyser {
         );
         //Все строчки для статистики, сначала добавляем общую информацию
         List<String> lines = new ArrayList<>(createGeneralStatistic());
-        Format finalFormat = format;
-        statistics.forEach(x -> lines.addAll(x.compute(logs, finalFormat)));
+        statistics.forEach(x -> lines.addAll(x.compute(logs, tableCreator)));
         Path path = FileUtil.createFileWithFormat(lines, format, rootToSave);
         LOGGER.info("Statistic created: " + path.toString());
         return path;
-    }
-
-    public static List<Log> convertToLog(List<String> lines) {
-        ArrayList<Log> logs = new ArrayList<>();
-        Pattern pattern = Pattern.compile("(.*) - (.*) \\[(.*)\\] \"((\\w*) (.*))\" (\\d*) (\\d*) \"(.*)\" \"(.*)\"");
-        for (String line : lines) {
-            Matcher matcher = pattern.matcher(line);
-            if (matcher.matches()) {
-                String remoteAddress = matcher.group(1);
-                String remoteUser = matcher.group(2);
-                DateTimeFormatter f = new DateTimeFormatterBuilder()
-                    .appendPattern("dd/MMM/yyyy:HH:mm:ss ZZZ")
-                    .toFormatter(Locale.ENGLISH);
-                OffsetDateTime offsetDateTime = OffsetDateTime.parse(matcher.group(DATETIME), f);
-                String requestType = matcher.group(REQUEST_TYPE);
-                String request = matcher.group(REQUEST);
-                int status = Integer.parseInt(matcher.group(STATUS));
-                int bytesSend = Integer.parseInt(matcher.group(BYTES));
-                String httpReferer = matcher.group(REFERER);
-                String httpUserAgent = matcher.group(USER_AGENT);
-                Log log = new Log(
-                    remoteAddress,
-                    remoteUser,
-                    offsetDateTime,
-                    request,
-                    requestType,
-                    status,
-                    bytesSend,
-                    httpReferer,
-                    httpUserAgent
-                );
-                logs.add(log);
-            }
-        }
-
-        return Collections.unmodifiableList(logs);
     }
 
     public LocalDate getFrom() {

@@ -1,8 +1,7 @@
 package edu.project3.stats;
 
-import edu.project3.Format;
 import edu.project3.Log;
-import java.util.ArrayList;
+import edu.project3.table.TableCreator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,7 +11,7 @@ public class TopRequestStatistic implements Statistic {
     public static final int MAX_SIZE = 3;
 
     @Override
-    public List<String> compute(List<Log> logs, Format format) {
+    public List<String> compute(List<Log> logs, TableCreator tableCreator) {
         Map<String, Long> stats =
             logs.stream().collect(Collectors.groupingBy(
                 (l) -> l.request().split(" ")[0],
@@ -21,18 +20,9 @@ public class TopRequestStatistic implements Statistic {
         List<Map.Entry<String, Long>> sortedTop =
             stats.entrySet().stream().sorted((x, y) -> Long.compare(y.getValue(), x.getValue()))
                 .limit(MAX_SIZE).toList();
-        List<List<String>> lines = new ArrayList<>();
-        for (int i = 0; i < sortedTop.size(); i++) {
-            List<String> line = new ArrayList<>(2);
-            String request = sortedTop.get(i).getKey();
-            Long count = sortedTop.get(i).getValue();
-            line.add(request);
-            line.add(String.valueOf(count));
-            lines.add(line);
-        }
+        List<List<String>> lines = StatisticConverter.convertToLines(sortedTop);
         List<String> columnNames = List.of("Ресурс", "Количество");
         String title = "Запрашиваемые ресурсы";
-
-        return Statistic.createTable(lines, columnNames, title, format);
+        return tableCreator.createTable(lines, columnNames, title);
     }
 }

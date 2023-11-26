@@ -21,26 +21,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AnalyserTest {
-    Path root = Path.of(Paths.get("")
-        .toAbsolutePath()
-        .toString(), "src/test/java/edu/project3");
-
-    @Test
-    void convertToLog() {
-        Log log =
-            new Log("93.180.71.3",
-                "-",
-                OffsetDateTime.of(LocalDateTime.parse("2015-05-17T08:05:32"), ZoneOffset.UTC),
-                "/downloads/product_1 HTTP/1.1",
-                "GET", 304, 0, "-", "Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.21)"
-            );
-        List<Log> logs = Analyser.convertToLog(List.of(
-            "93.180.71.3 - - [17/May/2015:08:05:32 +0000] \"GET /downloads/product_1 HTTP/1.1\" 304 0 \"-\" \"Debian APT-HTTP/1.3 (0.8.16~exp12ubuntu10.21)\""));
-        Assertions.assertEquals(1, logs.size());
-        Assertions.assertEquals(log, logs.get(0));
-        String dir = System.getProperty("user.home");
-        System.out.println(dir);
-    }
+    Path root = Path.of("src/main/resources");
 
     @Test
     void analyseFromHTTP() {
