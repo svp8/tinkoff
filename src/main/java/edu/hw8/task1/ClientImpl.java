@@ -16,16 +16,14 @@ import java.util.concurrent.Future;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@SuppressWarnings("UncommentedMain")
 public class ClientImpl implements Callable<String> {
+    public static final int PORT = 8080;
     private final String question;
-    private static final Logger LOGGER= LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public ClientImpl(String question) {
         this.question = question;
-    }
-
-    public static void main(String[] args) {
-       LOGGER.info(getQuote("оскорбления"));
     }
 
     public static String getQuote(String word) {
@@ -59,12 +57,11 @@ public class ClientImpl implements Callable<String> {
         Socket clientSocket = null;
         while (true) {
             try {
-                clientSocket = new Socket("localhost", 8080);
+                clientSocket = new Socket("localhost", PORT);
                 if (clientSocket != null) {
                     break;
                 }
-            } catch (IOException e) {
-                Thread.sleep(1000);
+            } catch (IOException ignored) {
             }
         }
 
@@ -73,7 +70,7 @@ public class ClientImpl implements Callable<String> {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))
         ) {
             LOGGER.info("Client connected");
-            out.write(question+"\n");
+            out.write(question + "\n");
             out.flush();
             String quote = in.readLine();
             clientSocket.close();

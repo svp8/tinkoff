@@ -14,24 +14,25 @@ class ClientImplTest {
         , "глупый", "А я тебе говорил, что ты глупый? Так вот, я забираю свои слова обратно... Ты просто бог идиотизма."
         , "интеллект", "Чем ниже интеллект, тем громче оскорбления"
     );
+
     @Test
     void getQuote() {
-        new Thread(()-> ServerImpl.startServer(3,quotesExample,1)).start();
+        new Thread(() -> ServerImpl.startServer(3, quotesExample, 1)).start();
         Assertions.assertEquals(quotesExample.get("оскорбления"), ClientImpl.getQuote("оскорбления"));
     }
+
     @Test
     void getQuoteUnknownWord() {
-        new Thread(()->ServerImpl.startServer(3,quotesExample,1)).start();
-        Assertions.assertEquals("No quote for the word",ClientImpl.getQuote("привет"));
+        new Thread(() -> ServerImpl.startServer(3, quotesExample, 1)).start();
+        Assertions.assertEquals("No quote for the word", ClientImpl.getQuote("привет"));
     }
-
 
     @Test
     void getQuotes() {
-        List<String> words=List.of("оскорбления","личности","глупый","интеллект","глупый");
-        new Thread(()->ServerImpl.startServer(3,quotesExample,5)).start();
-        List<String> quotes=ClientImpl.getQuotes(words);
-        Assertions.assertEquals(5,quotes.size());
+        List<String> words = List.of("оскорбления", "личности", "глупый", "интеллект", "глупый");
+        new Thread(() -> ServerImpl.startServer(3, quotesExample, 5)).start();
+        List<String> quotes = ClientImpl.getQuotes(words);
+        Assertions.assertEquals(5, quotes.size());
     }
 
 }
