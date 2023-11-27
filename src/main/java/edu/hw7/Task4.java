@@ -1,8 +1,6 @@
 package edu.hw7;
 
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,27 +30,30 @@ public final class Task4 {
         return pi;
     }
 
-    public static double calculatePiParallel(int n) throws InterruptedException {
+    public static double calculatePiParallel(int n, int threadCount) throws InterruptedException {
         final AtomicInteger totalCount = new AtomicInteger(0);
         final AtomicInteger circleCount = new AtomicInteger(0);
         SecureRandom random = new SecureRandom();
-        int threadCount = 2;
-        Callable<Void> callable = () -> {
+        Runnable task = () -> {
             for (int i = 0; i < n / threadCount; i++) {
                 if ((pow(random.nextDouble(0, 1), 2) + pow(random.nextDouble(0, 1), 2)) < 1) {
                     circleCount.incrementAndGet();
                 }
                 totalCount.incrementAndGet();
             }
-            return null;
         };
-
-        ArrayList<Callable<Void>> tasks = new ArrayList<>();
-        for (int i = 0; i < threadCount; i++) {
-            tasks.add(callable);
-        }
         try (ExecutorService executor = Executors.newFixedThreadPool(threadCount)) {
-            executor.invokeAll(tasks);
+            for (int i = 0; i < threadCount; i++) {
+                executor.execute(task);
+            }
+        }
+        if (totalCount.get() < n) {
+            for (int i = 0; i < n - totalCount.get(); i++) {
+                if ((pow(random.nextDouble(0, 1), 2) + pow(random.nextDouble(0, 1), 2)) < 1) {
+                    circleCount.incrementAndGet();
+                }
+                totalCount.incrementAndGet();
+            }
         }
         double pi = FOUR * (circleCount.doubleValue() / totalCount.doubleValue());
         return pi;

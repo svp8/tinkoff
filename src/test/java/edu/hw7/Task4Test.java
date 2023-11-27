@@ -24,21 +24,21 @@ class Task4Test {
     @Test
     void calculatePiParallel() throws InterruptedException {
         long start = System.currentTimeMillis();
-        logger.info(Task4.calculatePiParallel(100000));
+        logger.info(Task4.calculatePiParallel(100000,4));
         long end = System.currentTimeMillis();
         logger.info(end - start);
     }
 
     @Test
     void compare() throws InterruptedException {
-        int n = 1000;
+        int n = 1;
         long start = System.currentTimeMillis();
         logger.info(Task4.calculatePi(n));
         long end = System.currentTimeMillis();
         logger.info((end - start));
 
         start = System.currentTimeMillis();
-        logger.info(Task4.calculatePiParallel(n));
+        logger.info(Task4.calculatePiParallel(n,4));
         end = System.currentTimeMillis();
         logger.info((end - start));
     }

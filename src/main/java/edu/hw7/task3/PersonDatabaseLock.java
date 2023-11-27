@@ -14,8 +14,8 @@ public class PersonDatabaseLock implements PersonDatabase {
 
     @Override
     public void add(Person person) {
+        lock.writeLock().lock();
         try {
-            lock.writeLock().lock();
             idCache.put(person.id(), person);
             nameCache.put(person.name(), person);
             addressCache.put(person.address(), person);
@@ -27,8 +27,8 @@ public class PersonDatabaseLock implements PersonDatabase {
 
     @Override
     public void delete(int id) {
+        lock.writeLock().lock();
         try {
-            lock.writeLock().lock();
             if (idCache.containsKey(id)) {
                 Person person = idCache.get(id);
                 nameCache.remove(person.name());
@@ -43,10 +43,9 @@ public class PersonDatabaseLock implements PersonDatabase {
 
     @Override
     public @Nullable Person findByName(String name) {
+        lock.readLock().lock();
         try {
-            lock.readLock().lock();
-            Person person = nameCache.get(name);
-            return person;
+            return nameCache.get(name);
         } finally {
             lock.readLock().unlock();
         }
@@ -54,10 +53,9 @@ public class PersonDatabaseLock implements PersonDatabase {
 
     @Override
     public @Nullable Person findByAddress(String address) {
+        lock.readLock().lock();
         try {
-            lock.readLock().lock();
-            Person person = addressCache.get(address);
-            return person;
+            return addressCache.get(address);
         } finally {
             lock.readLock().unlock();
         }
@@ -65,10 +63,9 @@ public class PersonDatabaseLock implements PersonDatabase {
 
     @Override
     public @Nullable Person findByPhone(String phone) {
+        lock.readLock().lock();
         try {
-            lock.readLock().lock();
-            Person person = phoneCache.get(phone);
-            return person;
+            return phoneCache.get(phone);
         } finally {
             lock.readLock().unlock();
         }
