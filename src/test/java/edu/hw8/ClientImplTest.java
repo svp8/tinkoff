@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 class ClientImplTest {
     static Map<String, String> quotesExample = Map.of("личности", "Не переходи на личности там, где их нет"
@@ -16,23 +17,51 @@ class ClientImplTest {
     );
 
     @Test
-    void getQuote() {
-        new Thread(() -> ServerImpl.startServer(3, quotesExample, 1)).start();
-        Assertions.assertEquals(quotesExample.get("оскорбления"), ClientImpl.getQuote("оскорбления"));
+    void getQuote() throws Exception {
+        String quote = null;
+        try (ServerImpl server = new ServerImpl(quotesExample, 3, 8080)) {
+            quote = ClientImpl.getQuote("оскорбления");
+        }
+        Assertions.assertEquals(quotesExample.get("оскорбления"), quote);
+    }
+
+    @Test
+    void connectionFailed() {
+        Assertions.assertThrows(RuntimeException.class, () -> ClientImpl.getQuote("оскорбления"));
     }
 
     @Test
     void getQuoteUnknownWord() {
-        new Thread(() -> ServerImpl.startServer(3, quotesExample, 1)).start();
-        Assertions.assertEquals("No quote for the word", ClientImpl.getQuote("привет"));
+        String quote = null;
+        try (ServerImpl server = new ServerImpl(quotesExample, 3, 8080)) {
+            quote = ClientImpl.getQuote("1213");
+        } catch (Exception ignored) {
+        }
+        Assertions.assertEquals("No quote for the word", quote);
     }
 
     @Test
     void getQuotes() {
         List<String> words = List.of("оскорбления", "личности", "глупый", "интеллект", "глупый");
-        new Thread(() -> ServerImpl.startServer(3, quotesExample, 5)).start();
-        List<String> quotes = ClientImpl.getQuotes(words);
+        List<String> quotes = null;
+        try (ServerImpl server = new ServerImpl(quotesExample, 3, 8080)) {
+            quotes = ClientImpl.getQuotes(words);
+            ;
+        } catch (Exception ignored) {
+        }
         Assertions.assertEquals(5, quotes.size());
+    }
+
+    @Test
+    void getQuotesMoreThanPool() {
+        List<String> words = Stream.generate(() -> "abc").limit(20).toList();
+        List<String> quotes = null;
+        try (ServerImpl server = new ServerImpl(quotesExample, 3, 8080)) {
+            quotes = ClientImpl.getQuotes(words);
+            ;
+        } catch (Exception ignored) {
+        }
+        Assertions.assertEquals(20, quotes.size());
     }
 
 }

@@ -13,35 +13,45 @@ import java.util.concurrent.Executors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ServerImpl implements Runnable {
-    public static final int PORT = 8080;
-    private final Socket client;
+public class ServerImpl implements AutoCloseable {
+    public final int port;
     private final Map<String, String> quotes;
+    private final int poolNumber;
+    private ServerSocket server;
+    private final ExecutorService executorService;
+    private boolean isClosed = false;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public ServerImpl(Socket client, Map<String, String> quotes) {
-        this.client = client;
+    public ServerImpl(Map<String, String> quotes, int poolNumber, int port) {
         this.quotes = quotes;
+        this.poolNumber = poolNumber;
+        this.executorService = Executors.newSingleThreadExecutor();
+        this.port = port;
+        start();
     }
 
-    public static void startServer(int poolNumber, Map<String, String> quotes, int maxRequests) {
-        int requests = 0;
-        try (ExecutorService executor = Executors.newFixedThreadPool(poolNumber)) {
-            try (ServerSocket server = new ServerSocket(PORT)) {
-                while (requests < maxRequests) {
-                    Runnable worker = new ServerImpl(server.accept(), quotes);
+    private void start() {
+        try {
+            server = new ServerSocket(port);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Runnable runnable = () -> {
+            try (ExecutorService executor = Executors.newFixedThreadPool(poolNumber)) {
+                while (!isClosed) {
+                    Socket client = server.accept();
+                    Runnable worker = () -> send(client);
                     executor.execute(worker);
-                    requests++;
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                LOGGER.warn(e.getMessage());
             }
-        }
+        };
+        executorService.execute(runnable);
     }
 
-    @Override
-    public void run() {
+    private void send(Socket client) {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
              BufferedWriter out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
         ) {
@@ -53,5 +63,12 @@ public class ServerImpl implements Runnable {
             throw new RuntimeException(e);
         }
 
+    }
+
+    @Override
+    public void close() throws Exception {
+        isClosed = true;
+        server.close();
+        executorService.shutdown();
     }
 }

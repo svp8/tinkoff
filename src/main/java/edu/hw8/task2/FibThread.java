@@ -1,5 +1,7 @@
 package edu.hw8.task2;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 public class FibThread implements Runnable {
     public static final int THREE = 3;
     private final int n;
@@ -15,6 +17,7 @@ public class FibThread implements Runnable {
 
     @Override
     public void run() {
+        ReentrantLock lock = new ReentrantLock();
         if (n == 1) {
             answer = 0;
         } else if (n == 2) {

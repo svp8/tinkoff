@@ -54,20 +54,9 @@ public class ClientImpl implements Callable<String> {
 
     @Override
     public String call() throws Exception {
-        Socket clientSocket = null;
-        while (true) {
-            try {
-                clientSocket = new Socket("localhost", PORT);
-                if (clientSocket != null) {
-                    break;
-                }
-            } catch (IOException ignored) {
-            }
-        }
-
-        try (
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))
+        try (Socket clientSocket = new Socket("localhost", PORT);
+             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()))
         ) {
             LOGGER.info("Client connected");
             out.write(question + "\n");
@@ -75,6 +64,9 @@ public class ClientImpl implements Callable<String> {
             String quote = in.readLine();
             clientSocket.close();
             return quote;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

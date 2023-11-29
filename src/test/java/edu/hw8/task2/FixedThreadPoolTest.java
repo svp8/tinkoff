@@ -21,6 +21,9 @@ class FixedThreadPoolTest {
             for (FibThread i : fibs) {
                 threads.execute(i);
             }
+            threads.execute(() -> {
+                throw new RuntimeException();
+            });
         }
         Assertions.assertEquals(0, fibs.get(0).getAnswer());
         Assertions.assertEquals(1, fibs.get(1).getAnswer());

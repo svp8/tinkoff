@@ -17,33 +17,55 @@ import java.util.concurrent.Future;
 public class ParallelGenerator implements Generator {
     private static final char MAX_CHAR_VALUE = 'z';
     private static final char MIN_CHAR_VALUE = '0';
-    public static final int THREAD_COUNT = 4;
     public static final int CHARS_COUNT = 36;
-    public static final int MAX_NUMBER_VALUE = 9;
     static boolean found = false;
+    private final char[] chars = new char[CHARS_COUNT];
+    private final int threadCount;
+
+    public ParallelGenerator(int threadCount) {
+        this.threadCount = threadCount;
+        init();
+    }
+
+    public void init() {
+        char cur = '0';
+        for (int i = 0; i < CHARS_COUNT; i++) {
+            chars[i] = cur;
+            if (cur == '9') {
+                cur = 'a';
+            } else {
+                cur++;
+            }
+        }
+    }
 
     public String find(String hash, int maxNumChars) {
+        init();
         char[] guess;
         found = false;
-        List<Callable<String>> tasks = new ArrayList<>(THREAD_COUNT);
-        try (ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT)) {
+        int finalThreadCount = Math.min(threadCount, CHARS_COUNT);
+        List<Callable<String>> tasks = new ArrayList<>(finalThreadCount);
+        try (ExecutorService executorService = Executors.newFixedThreadPool(finalThreadCount)) {
             for (int numChars = 1; numChars <= maxNumChars; numChars++) {
                 guess = new char[numChars];
                 for (int x = 0; x < numChars; x++) {
                     guess[x] = MIN_CHAR_VALUE;
                 }
-                int add = CHARS_COUNT / THREAD_COUNT;
-                char start = '0';
+                int add = CHARS_COUNT / finalThreadCount;
+                int mod = CHARS_COUNT % finalThreadCount;
                 //поток 1 - 100000-900000  поток 2-900000-h00000 и т.д.
                 for (int i = 0; i < CHARS_COUNT; i += add) {
-                    char[] chars = Arrays.copyOf(guess, guess.length);
-                    chars[0] = start;
-                    if (start == '9') {
-                        start = 'h';
+                    char[] temp = Arrays.copyOf(guess, guess.length);
+                    temp[0] = chars[i];
+                    char maxChar;
+                    if (i + add + mod >= CHARS_COUNT) {
+                        maxChar = (char) (chars[chars.length - 1] + 1);
                     } else {
-                        start += MAX_NUMBER_VALUE;
+                        maxChar = chars[i + add + mod];
                     }
-                    tasks.add(checkParallel(chars, start, hash));
+                    tasks.add(checkParallel(temp, maxChar, hash));
+                    i += mod;
+                    mod = 0;
                 }
 
             }
