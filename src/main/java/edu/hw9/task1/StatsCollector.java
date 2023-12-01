@@ -5,22 +5,23 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class StatsCollector {
-    ReentrantReadWriteLock lock=new ReentrantReadWriteLock();
-    List<Stat> stats=new ArrayList<>();
+    ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    List<Stat> stats = new ArrayList<>();
 
-    public void push(Stat stat){
+    public void push(Stat stat) {
         lock.writeLock().lock();
-        try{
+        try {
             stats.add(stat);
-        }finally {
+        } finally {
             lock.writeLock().unlock();
         }
     }
-    public List<Stat> getStats(){
+
+    public List<Stat> getStats() {
         lock.readLock().lock();
-        try{
+        try {
             return stats;
-        }finally {
+        } finally {
             lock.readLock().unlock();
         }
     }

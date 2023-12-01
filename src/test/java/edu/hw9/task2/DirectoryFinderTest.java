@@ -15,7 +15,8 @@ class DirectoryFinderTest {
     @Test
     void compute() throws IOException {
         Path root = Path.of("src/main/resources/dir").toAbsolutePath();
-        List<Path> actual = DirectoryFinder.find(root, 1);
+        Finder finder = new DirectoryFinder(root, 1);
+        List<Path> actual = finder.find();
         Assertions.assertEquals(2, actual.size());
         for (Path path : actual) {
             try (DirectoryStream<Path>

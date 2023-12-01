@@ -38,12 +38,12 @@ public class DFSParallelSolver extends RecursiveTask<List<Coordinate>> implement
 
     @Override
     public List<Coordinate> solve(Labyrinth labyrinth, Coordinate coordinate1, Coordinate coordinate2) {
-        List<Cell> cells = labyrinth.cells();
-        boolean[][] visited = new boolean[labyrinth.height()][labyrinth.width()];
-        try(ForkJoinPool forkJoinPool = new ForkJoinPool()){
-            Map<Coordinate, Coordinate> temp=new HashMap<>();
-            temp.put(current,null);
-            DFSParallelSolver processor = new DFSParallelSolver(coordinate1,coordinate2,visited,cells,temp);
+        List<Cell> c = labyrinth.cells();
+        boolean[][] v = new boolean[labyrinth.height()][labyrinth.width()];
+        try (ForkJoinPool forkJoinPool = new ForkJoinPool()) {
+            Map<Coordinate, Coordinate> temp = new HashMap<>();
+            temp.put(current, null);
+            DFSParallelSolver processor = new DFSParallelSolver(coordinate1, coordinate2, v, c, temp);
 
             forkJoinPool.execute(processor);
 
@@ -74,8 +74,8 @@ public class DFSParallelSolver extends RecursiveTask<List<Coordinate>> implement
             }
         }
         for (DFSParallelSolver task : subTasks) {
-            List<Coordinate> temp=task.join();
-            if(temp!=null&&temp.size()!=0&&temp.get(temp.size()-1).equals(target)){
+            List<Coordinate> temp = task.join();
+            if (temp != null && temp.size() != 0 && temp.get(temp.size() - 1).equals(target)) {
                 return temp;
             }
         }

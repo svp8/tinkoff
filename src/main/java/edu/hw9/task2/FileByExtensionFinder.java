@@ -12,7 +12,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Stream;
 
-public class FileByExtensionFinder extends RecursiveTask<List<Path>> {
+public class FileByExtensionFinder extends RecursiveTask<List<Path>> implements Finder {
     private final Path root;
     private final String extension;
 
@@ -21,7 +21,7 @@ public class FileByExtensionFinder extends RecursiveTask<List<Path>> {
         this.extension = extension;
     }
 
-    public static List<Path> find(Path root, String extension) {
+    public List<Path> find() {
         try (ForkJoinPool forkJoinPool = new ForkJoinPool()) {
             FileByExtensionFinder finder = new FileByExtensionFinder(root, extension);
             forkJoinPool.execute(finder);

@@ -15,14 +15,17 @@ class FileByExtensionFinderTest {
     @Test
     void computeEmptyExtension() throws IOException {
         Path root = Path.of("src/main/resources/extensionDir").toAbsolutePath();
-        List<Path> actual = FileByExtensionFinder.find(root, "");
+        Finder finder = new FileByExtensionFinder(root, "");
+        List<Path> actual = finder.find();
         Assertions.assertEquals(1, actual.size());
         Assertions.assertTrue(actual.get(0).endsWith("a"));
     }
+
     @Test
     void computeTxt() throws IOException {
         Path root = Path.of("src/main/resources/extensionDir").toAbsolutePath();
-        List<Path> actual = FileByExtensionFinder.find(root, "txt");
+        Finder finder = new FileByExtensionFinder(root, "txt");
+        List<Path> actual = finder.find();
         Assertions.assertEquals(2, actual.size());
     }
 }

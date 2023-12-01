@@ -10,7 +10,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Stream;
 
-public class FileBySizeFinder extends RecursiveTask<List<Path>> {
+public class FileBySizeFinder extends RecursiveTask<List<Path>> implements Finder {
     private final Path root;
     private final int size;
 
@@ -19,7 +19,7 @@ public class FileBySizeFinder extends RecursiveTask<List<Path>> {
         this.size = size;
     }
 
-    public static List<Path> find(Path root, int size) {
+    public List<Path> find() {
         try (ForkJoinPool forkJoinPool = new ForkJoinPool()) {
             FileBySizeFinder finder = new FileBySizeFinder(root, size);
             forkJoinPool.execute(finder);
@@ -40,8 +40,7 @@ public class FileBySizeFinder extends RecursiveTask<List<Path>> {
                 finder.fork();
                 subTasks.add(finder);
             }
-        } catch (IOException x) {
-            System.err.println(x);
+        } catch (IOException ignored) {
         }
         try (Stream<Path> files = Files.list(root)
             .filter((f) -> Files.isRegularFile(f) && f.toFile().length() >= size)) {

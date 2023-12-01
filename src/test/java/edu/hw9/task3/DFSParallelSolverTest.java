@@ -36,7 +36,7 @@ class DFSParallelSolverTest {
     }
 
     @Test
-    void compare() {
+    void showPath() {
         HuntAndKillGenerator generator = new HuntAndKillGenerator(new Random(123));
         Labyrinth labyrinth = generator.generate(20, 20);
         List<Coordinate> expected = List.of(
@@ -48,7 +48,7 @@ class DFSParallelSolverTest {
         );
         Solver solver = new DFSParallelSolver();
         List<Coordinate> path = solver.solve(labyrinth, new Coordinate(2, 2), new Coordinate(12, 12));
-        Console.printLabyrinth(labyrinth,path);
+        Console.printLabyrinth(labyrinth, path);
 //        Assertions.assertEquals(5, path.size());
 //        Assertions.assertEquals(expected, path);
 

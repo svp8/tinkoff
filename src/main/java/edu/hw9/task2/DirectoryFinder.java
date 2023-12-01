@@ -10,7 +10,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveTask;
 import java.util.stream.Stream;
 
-public class DirectoryFinder extends RecursiveTask<List<Path>> {
+public class DirectoryFinder extends RecursiveTask<List<Path>> implements Finder {
     private final Path root;
     private final int fileCount;
 
@@ -19,7 +19,7 @@ public class DirectoryFinder extends RecursiveTask<List<Path>> {
         this.fileCount = fileCount;
     }
 
-    public static List<Path> find(Path root, int fileCount) {
+    public List<Path> find() {
         try (ForkJoinPool forkJoinPool = new ForkJoinPool()) {
             DirectoryFinder directoryFinder = new DirectoryFinder(root, fileCount);
             forkJoinPool.execute(directoryFinder);
@@ -42,8 +42,7 @@ public class DirectoryFinder extends RecursiveTask<List<Path>> {
                 subTasks.add(directoryFinder);
                 dirCount++;
             }
-        } catch (IOException x) {
-            System.err.println(x);
+        } catch (IOException ignored) {
         }
         try (Stream<Path> files = Files.list(root)) {
             long count = files.count() - dirCount;
