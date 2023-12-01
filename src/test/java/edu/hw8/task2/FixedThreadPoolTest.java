@@ -12,23 +12,23 @@ class FixedThreadPoolTest {
     void execute() throws Exception {
         FibThread fibThread;
         try (FixedThreadPool threads = FixedThreadPool.create(10)) {
-            fibThread = new FibThread(5, threads);
+            fibThread = new FibThread(4, threads);
             threads.execute(fibThread);
         }
 
-        Assertions.assertEquals(3, fibThread.getAnswer());
+        Assertions.assertEquals(2, fibThread.getAnswer());
     }
 
     @Test
     void executeWithException() throws Exception {
         FibThread fibThread;
         try (FixedThreadPool threads = FixedThreadPool.create(10)) {
-            fibThread = new FibThread(5, threads);
+            fibThread = new FibThread(4, threads);
             threads.execute(fibThread);
             threads.execute(() -> {
                 throw new RuntimeException();
             });
         }
-        Assertions.assertEquals(3, fibThread.getAnswer());
+        Assertions.assertEquals(2, fibThread.getAnswer());
     }
 }

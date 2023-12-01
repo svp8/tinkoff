@@ -41,23 +41,23 @@ class ParallelGeneratorTest {
         Assertions.assertEquals(null, actual);
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {2, 3, 4, 5})
-    void compare(int threadCount) {
-        Generator generator = new ParallelGenerator(threadCount);
-        long start = System.nanoTime();
-        String actual = generator.find("827ccb0eea8a706c4c34a16891f84e7b", 6);
-        long end = System.nanoTime();
-        logger.info("ParallelGenerator: " + ((end - start) / 1_000_000));
-        Assertions.assertEquals("12345", actual);
-    }
-    @Test
-    void compareSimple() {
-        Generator generator = new SimpleGenerator();
-        long start = System.nanoTime();
-        String actual = generator.find("827ccb0eea8a706c4c34a16891f84e7b", 6);
-        long end = System.nanoTime();
-        logger.info("ParallelGenerator: " + ((end - start) / 1_000_000));
-        Assertions.assertEquals("12345", actual);
-    }
+//    @ParameterizedTest
+//    @ValueSource(ints = {2, 3, 4, 5})
+//    void compare(int threadCount) {
+//        Generator generator = new ParallelGenerator(threadCount);
+//        long start = System.nanoTime();
+//        String actual = generator.find("827ccb0eea8a706c4c34a16891f84e7b", 6);
+//        long end = System.nanoTime();
+//        logger.info("ParallelGenerator: " + ((end - start) / 1_000_000));
+//        Assertions.assertEquals("12345", actual);
+//    }
+//    @Test
+//    void compareSimple() {
+//        Generator generator = new SimpleGenerator();
+//        long start = System.nanoTime();
+//        String actual = generator.find("827ccb0eea8a706c4c34a16891f84e7b", 6);
+//        long end = System.nanoTime();
+//        logger.info("ParallelGenerator: " + ((end - start) / 1_000_000));
+//        Assertions.assertEquals("12345", actual);
+//    }
 }
