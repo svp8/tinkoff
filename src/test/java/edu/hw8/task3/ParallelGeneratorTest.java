@@ -50,10 +50,14 @@ class ParallelGeneratorTest {
         long end = System.nanoTime();
         logger.info("ParallelGenerator: " + ((end - start) / 1_000_000));
         Assertions.assertEquals("12345", actual);
-//        generator = new SimpleGenerator();
-//        start = System.currentTimeMillis();
-//        actual = generator.find("e10adc3949ba59abbe56e057f20f883e", 6);
-//        end = System.currentTimeMillis();
-//        logger.info("SimpleGenerator: " + (end - start));
+    }
+    @Test
+    void compareSimple() {
+        Generator generator = new SimpleGenerator();
+        long start = System.nanoTime();
+        String actual = generator.find("827ccb0eea8a706c4c34a16891f84e7b", 6);
+        long end = System.nanoTime();
+        logger.info("ParallelGenerator: " + ((end - start) / 1_000_000));
+        Assertions.assertEquals("12345", actual);
     }
 }
