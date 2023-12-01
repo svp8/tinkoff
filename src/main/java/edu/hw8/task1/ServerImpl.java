@@ -18,8 +18,7 @@ public class ServerImpl implements AutoCloseable {
     private final Map<String, String> quotes;
     private final int poolNumber;
     private ServerSocket server;
-    private final ExecutorService executorService;
-    private boolean isClosed = false;
+    private final ExecutorService executorService; //нужен, чтобы можно было использовать в start и close
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -39,7 +38,7 @@ public class ServerImpl implements AutoCloseable {
         }
         Runnable runnable = () -> {
             try (ExecutorService executor = Executors.newFixedThreadPool(poolNumber)) {
-                while (!isClosed) {
+                while (true) {
                     Socket client = server.accept();
                     Runnable worker = () -> send(client);
                     executor.execute(worker);
@@ -67,7 +66,6 @@ public class ServerImpl implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        isClosed = true;
         server.close();
         executorService.shutdown();
     }

@@ -1,17 +1,18 @@
 package edu.hw8.task2;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public final class FixedThreadPool implements ThreadPool {
+    public static final int TIMEOUT = 5000;
     private final Thread[] pool;
-    private final ConcurrentLinkedQueue<Runnable> workerQueue;
+    private final LinkedBlockingQueue<Runnable> workerQueue;
     private static final Logger LOGGER = LogManager.getLogger();
 
     private FixedThreadPool(int n) {
         this.pool = new Thread[n];
-        workerQueue = new ConcurrentLinkedQueue<>();
+        workerQueue = new LinkedBlockingQueue<>();
         for (int i = 0; i < n; i++) {
             pool[i] = new Worker("Custom Pool Thread " + i);
         }
@@ -36,9 +37,10 @@ public final class FixedThreadPool implements ThreadPool {
 
     }
 
-    public boolean isAllInterrupted() {
+    public boolean isAllStopped() {
         for (Thread worker : pool) {
-            if (worker.isAlive()) {
+            if (worker.isAlive() || !worker.isInterrupted()) {
+                worker.interrupt();
                 return false;
             }
         }
@@ -48,12 +50,17 @@ public final class FixedThreadPool implements ThreadPool {
     @Override
     public void close() throws Exception {
         LOGGER.info("Close start");
-        while (!workerQueue.isEmpty()) {
+        long start = System.currentTimeMillis();
+        long timeOfExecution = 0;
+        while (!workerQueue.isEmpty() && timeOfExecution < TIMEOUT) {
+            timeOfExecution = System.currentTimeMillis() - start;
         }
-        while (!isAllInterrupted()) {
-            for (int i = 0; i < pool.length; i++) {
-                pool[i].interrupt();
-            }
+        for (int i = 0; i < pool.length; i++) {
+            pool[i].interrupt();
+        }
+        start = System.currentTimeMillis();
+        while (!isAllStopped() && timeOfExecution < TIMEOUT) {
+            timeOfExecution = System.currentTimeMillis() - start;
         }
         LOGGER.info("Thread pool closed");
     }
@@ -64,18 +71,17 @@ public final class FixedThreadPool implements ThreadPool {
         }
 
         public void run() {
-            while (!interrupted() || !workerQueue.isEmpty()) {
+            while (!isInterrupted()) {
+                Runnable r;
                 try {
-                    Runnable r;
-                    while ((r = workerQueue.poll()) != null) {
-                        LOGGER.info("Started execution of task");
-                        r.run();
-                    }
-                } catch (Exception e) {
+                    r = workerQueue.take();
+                    r.run();
+                } catch (InterruptedException e) {
                     LOGGER.warn(e);
                 }
             }
             LOGGER.info(this.getName() + " stopped");
+            LOGGER.info(workerQueue.size());
         }
     }
 }

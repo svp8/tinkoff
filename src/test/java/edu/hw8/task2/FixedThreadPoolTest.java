@@ -14,6 +14,7 @@ class FixedThreadPoolTest {
         try (FixedThreadPool threads = FixedThreadPool.create(10)) {
             fibThread = new FibThread(4, threads);
             threads.execute(fibThread);
+            Thread.sleep(2000);
         }
 
         Assertions.assertEquals(2, fibThread.getAnswer());

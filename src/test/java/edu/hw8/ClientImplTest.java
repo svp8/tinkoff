@@ -58,7 +58,6 @@ class ClientImplTest {
         List<String> quotes = null;
         try (ServerImpl server = new ServerImpl(quotesExample, 3, 8080)) {
             quotes = ClientImpl.getQuotes(words);
-            ;
         } catch (Exception ignored) {
         }
         Assertions.assertEquals(20, quotes.size());

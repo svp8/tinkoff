@@ -62,7 +62,6 @@ public class ClientImpl implements Callable<String> {
             out.write(question + "\n");
             out.flush();
             String quote = in.readLine();
-            clientSocket.close();
             return quote;
 
         } catch (IOException e) {
