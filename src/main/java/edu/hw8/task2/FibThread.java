@@ -1,36 +1,35 @@
 package edu.hw8.task2;
 
-import java.util.concurrent.locks.ReentrantLock;
-
 public class FibThread implements Runnable {
-    public static final int THREE = 3;
     private final int n;
-    private long answer;
+    private volatile long answer = -1;
+    private final FixedThreadPool fixedThreadPool;
 
     public long getAnswer() {
         return answer;
     }
 
-    public FibThread(int n) {
+    public FibThread(int n, FixedThreadPool fixedThreadPool) {
         this.n = n;
+        this.fixedThreadPool = fixedThreadPool;
     }
 
     @Override
     public void run() {
-        ReentrantLock lock = new ReentrantLock();
         if (n == 1) {
             answer = 0;
         } else if (n == 2) {
             answer = 1;
         } else {
-            long l2 = 0;
-            long l1 = 1;
-            for (int i = THREE; i <= n; i++) {
-                long temp = l1;
-                l1 = l1 + l2;
-                l2 = temp;
+            FibThread fibThread2 = new FibThread(n - 2, fixedThreadPool);
+            FibThread fibThread1 = new FibThread(n - 1, fixedThreadPool);
+            fixedThreadPool.execute(fibThread1);
+            fixedThreadPool.execute(fibThread2);
+            while (fibThread1.getAnswer() == -1 || fibThread2.getAnswer() == -1) {
             }
-            answer = l1;
+            long l2 = fibThread1.getAnswer();
+            long l1 = fibThread2.getAnswer();
+            answer = l1 + l2;
         }
     }
 }

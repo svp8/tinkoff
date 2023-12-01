@@ -1,22 +1,21 @@
 package edu.hw8.task2;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public final class FixedThreadPool implements ThreadPool {
     private final Thread[] pool;
-    private final BlockingQueue<Runnable> workerQueue;
+    private final ConcurrentLinkedQueue<Runnable> workerQueue;
     private static final Logger LOGGER = LogManager.getLogger();
 
     private FixedThreadPool(int n) {
         this.pool = new Thread[n];
-        workerQueue = new LinkedBlockingQueue<>();
+        workerQueue = new ConcurrentLinkedQueue<>();
         for (int i = 0; i < n; i++) {
             pool[i] = new Worker("Custom Pool Thread " + i);
-            pool[i].start();
         }
+        start();
     }
 
     public static FixedThreadPool create(int n) {
@@ -25,14 +24,16 @@ public final class FixedThreadPool implements ThreadPool {
 
     @Override
     public void start() {
+        for (Thread thread : pool) {
+            thread.start();
+        }
     }
 
     @Override
     public void execute(Runnable runnable) {
-        try {
-            workerQueue.put(runnable);
-        } catch (InterruptedException ignored) {
-        }
+        LOGGER.info("put");
+        workerQueue.add(runnable);
+
     }
 
     public boolean isAllInterrupted() {
@@ -46,12 +47,13 @@ public final class FixedThreadPool implements ThreadPool {
 
     @Override
     public void close() throws Exception {
+        LOGGER.info("Close start");
         while (!workerQueue.isEmpty()) {
         }
-        for (Thread worker : pool) {
-            worker.interrupt();
-        }
         while (!isAllInterrupted()) {
+            for (int i = 0; i < pool.length; i++) {
+                pool[i].interrupt();
+            }
         }
         LOGGER.info("Thread pool closed");
     }
@@ -62,10 +64,9 @@ public final class FixedThreadPool implements ThreadPool {
         }
 
         public void run() {
-            while (!interrupted()) {
+            while (!interrupted() || !workerQueue.isEmpty()) {
                 try {
                     Runnable r;
-                    // Poll a runnable from the queue and execute it
                     while ((r = workerQueue.poll()) != null) {
                         LOGGER.info("Started execution of task");
                         r.run();
