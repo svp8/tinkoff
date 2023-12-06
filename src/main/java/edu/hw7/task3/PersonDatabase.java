@@ -1,5 +1,6 @@
 package edu.hw7.task3;
 
+import edu.hw10.task2.Cache;
 import org.jetbrains.annotations.Nullable;
 
 public interface PersonDatabase {
@@ -7,9 +8,9 @@ public interface PersonDatabase {
 
     void delete(int id);
 
-    @Nullable Person findByName(String name);
+    @Nullable @Cache(persist = true) Person findByName(String name);
 
-    @Nullable Person findByAddress(String address);
+    @Nullable @Cache(persist = false) Person findByAddress(String address);
 
     @Nullable Person findByPhone(String phone);
 }
