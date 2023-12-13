@@ -18,6 +18,6 @@ public class Task1 {
             .make()
             .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
             .getLoaded();
-        Assertions.assertEquals("Hello, ByteBuddy!",dynamicType.getConstructor().newInstance().toString());
+        Assertions.assertEquals("Hello, ByteBuddy!", dynamicType.getConstructor().newInstance().toString());
     }
 }
