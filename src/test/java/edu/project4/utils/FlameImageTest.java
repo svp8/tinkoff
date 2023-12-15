@@ -7,15 +7,14 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import static org.junit.jupiter.api.Assertions.*;
 
-class ImageUtilsTest {
+class FlameImageTest {
 
     @Test
     void createImageFile() throws IOException {
-        FlameImage flameImage=new FlameImage(10,10);
+        FlameImage flameImage = new FlameImage(10, 10);
 
-        File file=ImageUtils.createImageFile(flameImage,"test");
+        File file = flameImage.createImageFile("test");
 
         Assertions.assertTrue(Files.exists(file.toPath()));
         Assertions.assertTrue(file.toPath().endsWith("test.png"));
