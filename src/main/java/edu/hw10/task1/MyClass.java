@@ -3,11 +3,13 @@ package edu.hw10.task1;
 import edu.hw10.task1.annotations.Max;
 import edu.hw10.task1.annotations.Min;
 import edu.hw10.task1.annotations.NotNull;
+import edu.hw10.task2.Cache;
 
 public class MyClass {
     private final String name;
     private final int number;
 
+    @Cache(persist = false)
     public String getName() {
         return name;
     }

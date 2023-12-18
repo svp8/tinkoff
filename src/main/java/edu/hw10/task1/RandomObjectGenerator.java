@@ -9,23 +9,29 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
 public class RandomObjectGenerator {
-    Map<Class<?>, Constructor<?>> construtorMap;
-
-    public RandomObjectGenerator(Map<Class<?>, Constructor<?>> construtorMap) {
-        this.construtorMap = construtorMap;
-    }
 
     public <T> T nextObject(Class<T> type, String methodName) throws NoSuchMethodException {
         T instance = null;
-        Optional<Method> methodO =
-            Arrays.stream(type.getMethods()).filter(x -> x.getName().equals(methodName)).findFirst();
-        if (methodO.isEmpty()) {
+        List<Method> methods = Arrays.stream(type.getMethods()).filter(x -> x.getName().equals(methodName)).toList();
+        if (methods.isEmpty()) {
             throw new NoSuchMethodException();
+        }
+        Optional<Method> methodO = methods.stream().filter(x -> {
+            Class<?>[] types = x.getParameterTypes();
+            for (Class<?> aClass : types) {
+                if (!aClass.equals(String.class) && !aClass.equals(int.class)) {
+                    return false;
+                }
+            }
+            return true;
+        }).findFirst();
+        if (methodO.isEmpty()) {
+            throw new IllegalArgumentException("Class does not have valid method with only int and String");
         }
         Method method = methodO.get();
         Parameter[] params = method.getParameters();
@@ -47,7 +53,20 @@ public class RandomObjectGenerator {
 
     public <T> T nextObject(Class<T> type) {
         T instance = null;
-        Constructor<?> constructor = construtorMap.get(type);
+        Constructor<?>[] c = type.getDeclaredConstructors();
+        Optional<Constructor<?>> constructorOptional = Arrays.stream(type.getDeclaredConstructors()).filter(x -> {
+            Class<?>[] types = x.getParameterTypes();
+            for (Class<?> aClass : types) {
+                if (!aClass.equals(String.class) && !aClass.equals(int.class)) {
+                    return false;
+                }
+            }
+            return true;
+        }).findFirst();
+        if (constructorOptional.isEmpty()) {
+            throw new IllegalArgumentException("Class does not have valid constructor with only int and String");
+        }
+        Constructor<?> constructor = constructorOptional.get();
         Parameter[] params = constructor.getParameters();
         Object[] vals = new Object[params.length];
         for (int i = 0; i < params.length; i++) {
