@@ -6,6 +6,7 @@ import net.bytebuddy.implementation.FixedValue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.lang.reflect.InvocationTargetException;
+import static net.bytebuddy.matcher.ElementMatchers.isToString;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 
 public class Task1 {
@@ -14,7 +15,7 @@ public class Task1 {
         IllegalAccessException {
         Class<?> dynamicType = new ByteBuddy()
             .subclass(Object.class)
-            .method(named("toString")).intercept(FixedValue.value("Hello, ByteBuddy!"))
+            .method(isToString()).intercept(FixedValue.value("Hello, ByteBuddy!"))
             .make()
             .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
             .getLoaded();

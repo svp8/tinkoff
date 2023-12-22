@@ -14,8 +14,7 @@ import static net.bytebuddy.matcher.ElementMatchers.named;
 
 public class Task2 {
     @Test
-    void changeMethod()
-        throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    void changeMethod() {
         ByteBuddyAgent.install();
         new ByteBuddy()
             .redefine(ArithmeticUtils.class)
